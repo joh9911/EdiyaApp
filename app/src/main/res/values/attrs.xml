@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="menu_button">
+        <attr name="menu_image" format="integer"/>
+        <attr name="menu_name" format="string"/>
+        <attr name="menu_price" format="string"/>
+        <attr name="text_won" format="string"/>
+    </declare-styleable>
+</resources>

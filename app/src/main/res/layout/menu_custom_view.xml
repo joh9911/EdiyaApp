@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/americano"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@drawable/layout_button_bottom_border"
+    android:orientation="horizontal"
+    android:paddingTop="15dp"
+    android:paddingBottom="15dp"
+    app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/menu_image"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:src="@mipmap/americano"
+             />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/menu_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="카페 아메리카노"
+                android:textSize="15dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/menu_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.3"
+                    android:text="3,200"
+                    android:textColor="@color/ediya_color"
+                    android:textSize="25dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.9"
+                    android:text="원"
+                    android:textColor="@color/ediya_color" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>

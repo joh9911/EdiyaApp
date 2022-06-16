@@ -1,0 +1,284 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:id="@+id/top"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+        <ImageButton
+            android:id="@+id/back_button"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.15"
+            android:scaleType="fitXY"
+            android:adjustViewBounds="true"
+            android:src="@mipmap/backbutton"
+            android:background="@color/ediya_color"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.8"
+            android:background="@color/ediya_color"
+            android:paddingTop="15dp"
+            android:paddingBottom="15dp"
+            android:text="  EDIYA"
+            android:textColor="@color/white"
+            android:textSize="40dp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:paddingRight="20dp"
+            />
+
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.2"
+            android:background="@color/ediya_color"
+            android:src="@mipmap/menu_icon_150667" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/mixlatte"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@drawable/layout_button_bottom_border"
+        android:orientation="horizontal"
+        android:paddingTop="25dp"
+        android:paddingBottom="25dp"
+        app:layout_constraintTop_toBottomOf="@id/top">
+
+        <ImageView
+            android:id="@+id/menu_image"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.3"
+            android:src="@mipmap/mixlatte" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/menu_name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="믹스 라떼"
+                android:textSize="18dp" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/menu_price"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.4"
+                    android:text="3,800"
+                    android:textColor="@color/ediya_color"
+                    android:textSize="30dp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="0.9"
+                    android:text="원"
+                    android:textColor="@color/ediya_color" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/quantity"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/mixlatte"
+        android:background="@drawable/layout_button_bottom_border"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:text="  수량"
+            android:textSize="20dp"/>
+        <ImageView
+            android:id="@+id/remove_one_amount"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:src="@mipmap/substraction"/>
+        <TextView
+            android:id="@+id/text_amount"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.1"
+
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="center"/>
+        <ImageView
+            android:id="@+id/add_one_amount"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:src="@mipmap/addition"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/size_linear"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/quantity"
+        android:background="@drawable/layout_button_bottom_border"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:text="  사이즈"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:id="@+id/size_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="regular"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="right"/>
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:src="@mipmap/backbutton"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/cupselect"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/size_linear"
+        android:background="@drawable/layout_button_bottom_border"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:text="  컵 선택"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="일회용컵"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="right"/>
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:src="@mipmap/backbutton"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/option"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintTop_toBottomOf="@+id/cupselect"
+        android:background="@drawable/layout_button_bottom_border"
+        android:paddingBottom="10dp"
+        android:paddingTop="10dp"
+        >
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.7"
+            android:text="  옵션"
+            android:textSize="20dp"/>
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.2"
+            android:text="추가"
+            android:textSize="20dp"
+            android:textStyle="bold"
+            android:gravity="right"/>
+        <ImageView
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_weight="0.1"
+            android:src="@mipmap/backbutton"/>
+    </LinearLayout>
+    <LinearLayout
+        android:id="@+id/any_buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        app:layout_constraintTop_toBottomOf="@+id/option"
+        android:background="@drawable/layout_button_bottom_border">
+
+        <Button
+            android:id="@+id/basket_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:background="@drawable/shopping_basket_button"
+            android:text="장바구니 담기"
+            android:textColor="@color/black"
+            android:textStyle="bold" />
+
+        <Button
+            android:id="@+id/order_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/button_border"
+            android:text="바로 주문하기"
+            android:textStyle="bold"
+            android:layout_margin="10dp"/>
+    </LinearLayout>
+    <TextView
+        android:id="@+id/product_explanation_title"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toBottomOf="@+id/any_buttons"
+        android:text="   상품설명"
+        android:textColor="@color/black"
+        android:paddingTop="15dp"
+
+        />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="이디야의 노하우가 집약된 골드 블렌드 커피믹스를 엑스트라 사이즈로 즐길 수 있는 음료"
+        app:layout_constraintTop_toBottomOf="@+id/product_explanation_title"
+        android:paddingTop="10dp"
+        android:paddingBottom="10dp"
+        android:textColor="#5D5D5D"
+        android:background="@drawable/layout_button_bottom_border"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
