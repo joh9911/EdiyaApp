@@ -2,11 +2,11 @@
 <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:orientation="vertical"
-        android:background="@color/white" >
+        android:orientation="vertical">
 
         <LinearLayout
             android:id="@+id/shopping_item_list"
@@ -17,14 +17,19 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp">
 
+            <Button
+                android:id="@+id/waste_check_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:backgroundTint="#5D5D5D" />
 
             <TextView
                 android:id="@+id/menu_name"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
-                android:text="믹스라떼"
-                android:paddingLeft="10dp"
+                android:text="   믹스라떼"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
 
@@ -53,12 +58,9 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
-                android:background="@color/border_color"
-                android:text="일회용컵 / Extra / ICE "
-                android:paddingLeft="10dp"/>
+                android:text="  일회용컵 / Extra / ICE " />
 
             <TextView
-                android:background="@color/border_color"
                 android:id="@+id/sub_price"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"

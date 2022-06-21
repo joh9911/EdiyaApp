@@ -1,10 +1,10 @@
 package com.example.homework
 
 import android.app.Dialog
-import android.content.DialogInterface
-import android.content.Intent
+import android.content.*
 import android.media.Image
 import android.os.Bundle
+import android.os.IBinder
 import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -12,28 +12,69 @@ import androidx.appcompat.app.AppCompatActivity
 import org.w3c.dom.Text
 
 class SelectOptionPageActivity : AppCompatActivity() {
-//    var trashArray = arrayListOf<String>("시발 쓰레기값") //아니 이거 초기화 어캐했엇지
-//    var shoppingBasket = arrayListOf(trashArray)
+    var amount = 1
+    lateinit var boundService: Intent
+    lateinit var sizeTextView: TextView
+    var dataList = arrayListOf<String>()
+    var myService: BoundService? = null
+    var isConService = false
+    val serviceConnection = object : ServiceConnection {
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            Log.d("SelectOptionPageAcitivy 내의 onServiceConneced"," 실행되나?")
+            val b = p1 as BoundService.MyBoundService
+            myService = b.getService()
+            isConService = true
+            myService?.getEatingWay()
+            dataList = myService?.sendData()!!
+
+
+            settingMenu(dataList)
+            sizeChangeButtonEvent()
+            amountChangeButtonEvent()
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            isConService = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.select_option_page)
-        val sizeTextView = findViewById<TextView>(R.id.size_text)
-        var receiveData = intent.getStringArrayListExtra("sendData")!!
+        sizeTextView = findViewById<TextView>(R.id.size_text)
+        serviceBind()
+        initEvent()
+    }
+    fun serviceBind(){
+        boundService = Intent(this,BoundService::class.java)
+        bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
+        Log.d("SelectOptionPageAcitivy 내의 serviceBind","난 서비스 실행했음")
+    }
+    override fun onDestroy() {
+        Log.d("destory","이거 되잖아")
 
-        receiveData.set(3, sizeTextView.text.toString())
-
-        settingMenu(receiveData)
-        amountChangeButtonEvent()
-        sizeChangeButtonEvent(sizeTextView, receiveData)
-        initEvent(receiveData)
+        super.onDestroy()
     }
 
-    fun initEvent(receiveData: ArrayList<String>) {
+    fun serviceUnBind(){
+        if (isConService) {
+            unbindService(serviceConnection)
+            isConService = false
+            Log.d("SelectOptionPageAcitivy내의 serviceUnBind","난 서비스 껏음")
+        }
+    }
+
+    fun initEvent() {
         val backButton = findViewById<ImageButton>(R.id.back_button)
         backButton.setOnClickListener{
-            val intent = Intent(this, MenuSelectPageActivity::class.java)
+            finish()
+        }
+        val shoppingBasketButton = findViewById<ImageView>(R.id.shopping_basket_button)
+        shoppingBasketButton.setOnClickListener {
+            val intent = Intent(this, ShoppingBasketPageActivity::class.java)
             startActivity(intent)
         }
+
 
         val basketButton = findViewById<Button>(R.id.basket_button)
         basketButton.setOnClickListener {
@@ -46,9 +87,9 @@ class SelectOptionPageActivity : AppCompatActivity() {
 
             okButton.setOnClickListener {
                 dialog.dismiss()
-                val intent = Intent(this, MenuSelectPageActivity::class.java)
-                intent.putExtra("shoppingBasketData send", receiveData)
-                startActivity(intent)
+                myService?.addShoppingList(dataList)
+                myService?.addAmountData(amount.toString())
+                myService?.addSizeData(sizeTextView.text.toString())
             }
             dialog.show()
 
@@ -65,7 +106,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
     }
 
     fun amountChangeButtonEvent(){
-        var amount = 1
+        amount = 1
         val removeOneAmount = findViewById<ImageView>(R.id.remove_one_amount)
         val addOneAmount = findViewById<ImageView>(R.id.add_one_amount)
         val textAmount = findViewById<TextView>(R.id.text_amount)
@@ -85,7 +126,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
         }
 
     }
-    fun sizeChangeButtonEvent(sizeTextView: TextView, receiveData: ArrayList<String>) {
+    fun sizeChangeButtonEvent() {
 
         val view = layoutInflater.inflate(R.layout.select_size_option_dialog,null)
         val dialog = AlertDialog.Builder(this)
@@ -120,8 +161,6 @@ class SelectOptionPageActivity : AppCompatActivity() {
             else{
                 sizeTextView.text = "Extra"
             }
-            receiveData.set(3, sizeTextView.text.toString())
-            initEvent((receiveData))
             dialog.dismiss()
         }
         val sizeLinearLayout = findViewById<LinearLayout>(R.id.size_linear)
