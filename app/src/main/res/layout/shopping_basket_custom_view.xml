@@ -8,6 +8,7 @@
         android:orientation="vertical"
         android:background="@color/white" >
 
+
         <LinearLayout
             android:id="@+id/shopping_item_list"
             android:layout_width="match_parent"
@@ -16,6 +17,13 @@
             android:orientation="horizontal"
             android:paddingTop="10dp"
             android:paddingBottom="10dp">
+
+            <Button
+                android:id="@+id/waste_check_button"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:layout_marginLeft="10dp"
+                android:backgroundTint="#5D5D5D"/>
 
 
             <TextView
