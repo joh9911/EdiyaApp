@@ -11,7 +11,8 @@
         android:orientation="horizontal"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
+        app:layout_constraintTop_toTopOf="parent"
+        android:background="@color/ediya_color">
         <ImageView
             android:id="@+id/back_button"
             android:layout_width="0dp"
@@ -44,6 +45,17 @@
             android:paddingLeft="10dp"
             android:scaleType="fitXY"
             android:src="@mipmap/trash_image"/>
+        <Button
+            android:id="@+id/delete_process_confirm_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.3"
+            android:background="@drawable/round_button"
+            android:text="완료"
+            android:textSize="20dp"
+            android:padding="5dp"
+            android:layout_gravity="center"
+            />
     </LinearLayout>
 
 
@@ -133,6 +145,7 @@
             android:layout_marginRight="10dp"
             />
         <Button
+            android:id="@+id/delete_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="1"

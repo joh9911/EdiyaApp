@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.children
 import androidx.core.view.isGone
 import com.google.android.material.internal.ParcelableSparseArray
 import org.w3c.dom.Text
@@ -20,6 +21,7 @@ import java.lang.NullPointerException
 class ShoppingBasketPageActivity: AppCompatActivity() {
     lateinit var boundService: Intent
     lateinit var linearLayout: LinearLayout
+    lateinit var customView: View
     var shoppingList =
         arrayListOf<ArrayList<String>>()//1.drawable id, 2.name ,3.price, 4.amount, 5.size
     var myService: BoundService? = null
@@ -44,11 +46,15 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.shopping_basket_page)
+
+        findViewById<Button>(R.id.delete_button).visibility = View.INVISIBLE
+        findViewById<Button>(R.id.select_all_button).visibility = View.INVISIBLE
+        findViewById<Button>(R.id.delete_process_confirm_button).visibility = View.GONE
         linearLayout = findViewById(R.id.shopping_basket_linear_layout)
         serviceBind()
         backButtonEvent()
         wasteButtonEvent()
-
+        deleteProcessConfirmButtonEvent()
 
     }
 
@@ -75,8 +81,41 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
     fun wasteButtonEvent() {
         val wasteButton = findViewById<ImageView>(R.id.waste_button)
         wasteButton.setOnClickListener {
+            wasteButton.visibility = View.GONE
+            findViewById<Button>(R.id.delete_button).visibility = View.VISIBLE
+            findViewById<Button>(R.id.select_all_button).visibility = View.VISIBLE
+            findViewById<Button>(R.id.delete_process_confirm_button).visibility = View.VISIBLE
+            findViewById<Button>(R.id.order_confirm_button).visibility = View.INVISIBLE
+            val count = linearLayout.childCount
+            for (index in 0 until count) {
+                val child = linearLayout.getChildAt(index)
+                child.findViewById<Button>(R.id.waste_check_button).visibility = View.VISIBLE
+                child.invalidate()
+            }
+            deleteProcessConfirmButtonEvent()
+        }
+    }
+    fun deleteProcessConfirmButtonEvent(){
+        val deleteProcessConfirmButton = findViewById<Button>(R.id.delete_process_confirm_button)
+        deleteProcessConfirmButton.setOnClickListener{
+            deleteProcessConfirmButton.visibility = View.GONE
+            findViewById<Button>(R.id.delete_button).visibility = View.INVISIBLE
+            findViewById<Button>(R.id.select_all_button).visibility = View.INVISIBLE
+            findViewById<ImageView>(R.id.waste_button).visibility = View.VISIBLE
+            findViewById<Button>(R.id.order_confirm_button).visibility = View.VISIBLE
+            val count = linearLayout.childCount
+            for (index in 0 until count) {
+                val child = linearLayout.getChildAt(index)
+                child.findViewById<Button>(R.id.waste_check_button).visibility = View.GONE
+                child.invalidate()
+            }
+            wasteButtonEvent()
 
         }
+
+    }
+    fun deleteConfirmButtonEvent(){
+        val deleteConfirmButton = findViewById<Button>(R.id.delete_confirm_button)
     }
 
     fun backButtonEvent() {
@@ -91,7 +130,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
 
         for(index in 0 until shoppingList.size) {
             for(amount in 0 until shoppingList[index][3].toInt()) {
-                val customView = layoutInflater.inflate(
+                    customView = layoutInflater.inflate(
                     R.layout.shopping_basket_custom_view,
                     linearLayout,
                     false
