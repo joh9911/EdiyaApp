@@ -9,4 +9,5 @@
     <color name="white">#FFFFFFFF</color>
     <color name="ediya_color">#002e6c</color>
     <color name="border_color">#BDBDBD</color>
+    <color name="select_deletion_color">#0100FF</color>
 </resources>

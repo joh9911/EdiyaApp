@@ -18,12 +18,12 @@
             android:paddingTop="10dp"
             android:paddingBottom="10dp">
 
-            <Button
+            <CheckBox
                 android:id="@+id/waste_check_button"
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:layout_marginLeft="10dp"
-                android:backgroundTint="#5D5D5D"/>
+                 />
 
 
             <TextView

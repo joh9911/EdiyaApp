@@ -49,7 +49,7 @@
             android:id="@+id/delete_process_confirm_button"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:layout_weight="0.3"
+            android:layout_weight="0.2"
             android:background="@drawable/round_button"
             android:text="완료"
             android:textSize="20dp"
