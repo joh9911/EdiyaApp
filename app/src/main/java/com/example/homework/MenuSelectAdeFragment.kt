@@ -3,6 +3,7 @@ package com.example.homework
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
@@ -14,10 +15,11 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.google.gson.GsonBuilder
 
 class MenuSelectAdeFragment: Fragment() {
     lateinit var boundService: Intent
-    var sendData = arrayListOf<String>()
     val adeData = arrayOf(
 
         arrayOf("lemon_ade", "레몬 에이드", "3,800"),
@@ -25,6 +27,7 @@ class MenuSelectAdeFragment: Fragment() {
         arrayOf("grape_ade", "청포도 에이드", "3,900"),
 
         )
+    lateinit var adeJsonArray: String
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection {
@@ -48,15 +51,18 @@ class MenuSelectAdeFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.menu_select_coffee_fragment,container,false)
+        adeArrayToJson()
         serviceBind()
         addView(view)
         return view
     }
+
     fun serviceBind(){
         boundService = Intent(context,BoundService::class.java)
         activity?.bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
         Log.d("MainSelectCoffeeFragment 내의 serviceBind","난 서비스 실행했음")
     }
+
     fun serviceUnBind(){
         if (isConService) {
             activity?.unbindService(serviceConnection)
@@ -64,33 +70,59 @@ class MenuSelectAdeFragment: Fragment() {
             Log.d("MainSelectPageActivity내의 serviceUnBind","난 서비스 껏음")
         }
     }
+
     override fun onDestroy() {
         serviceUnBind()
         super.onDestroy()
     }
-    fun addView(view: View) {
-        val linearLayout = view.findViewById<LinearLayout>(R.id.menu_select_page_fragment_linear_layout)
+
+    fun adeArrayToJson() {
+        var temp = "["
         for (index in 0 until adeData.size) {
+
+            var coffeeJsonData =
+                "{'menuImageSource': '${adeData[index][0]}', 'menuName': '${adeData[index][1]}', 'menuPrice': '${adeData[index][2]}'}"
+            temp += coffeeJsonData
+            if (index < adeData.size - 1) {
+                temp += ","
+            }
+        }
+        temp += "]"
+        adeJsonArray = temp
+    }
+
+    fun addView(view: View) {
+        val gson = GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+        val adeGsonArray = gson.fromJson(adeJsonArray,Array<MenuSelection>::class.java)
+        val linearLayout = view.findViewById<LinearLayout>(R.id.menu_select_page_fragment_linear_layout)
+        for (index in 0 until adeGsonArray.size) {
             val customView = layoutInflater.inflate(R.layout.menu_custom_view, linearLayout, false)
 
             val id: Int =
                 resources.getIdentifier(//배열에 R.mipmap.~~ 이런식으로 저장하고 불러와서 .toInt()로 변환해서 넣으면 안돌아감. 배열에 mipmap 이름만 저장하고 이런식으로 불러오기
-                    adeData[index][0],
+                    adeGsonArray[index].menuImageSource,
                     "mipmap",
                     activity?.packageName
                 )
-            customView.findViewById<ImageView>(R.id.menu_image).setImageResource(id)
-            customView.findViewById<TextView>(R.id.menu_name).text = adeData[index][1]
-            customView.findViewById<TextView>(R.id.menu_price).text = adeData[index][2]
+            Glide
+                .with(view)
+                .load(id)
+                .placeholder(R.mipmap.extrasize)
+                .into(customView.findViewById<ImageView>(R.id.menu_image))
+//            customView.findViewById<ImageView>(R.id.menu_image).setImageResource(id)
+            customView.findViewById<TextView>(R.id.menu_name).text = adeGsonArray[index].menuName
+            customView.findViewById<TextView>(R.id.menu_price).text = adeGsonArray[index].menuPrice
 
             customView.setOnClickListener {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
+                intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
                 startActivity(intent)
-                sendData = arrayListOf(id.toString(), adeData[index][1], adeData[index][2])
-
-                myService?.getData(sendData)
+                val menu = MenuSelection(id.toString(), adeGsonArray[index].menuName, adeGsonArray[index].menuPrice )
+                val mySelection = gson.toJson(menu)
+                myService?.getSelectionData(mySelection)
             }
-            
             linearLayout.addView(customView)
         }
     }

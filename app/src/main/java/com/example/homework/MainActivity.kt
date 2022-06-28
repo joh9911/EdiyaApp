@@ -4,6 +4,7 @@ package com.example.homework
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
 import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -18,6 +19,7 @@ import androidx.recyclerview.widget.RecyclerView
 class MainActivity : AppCompatActivity() {
     lateinit var theWayOfEating: String
     lateinit var boundService: Intent
+
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection{
@@ -34,6 +36,7 @@ class MainActivity : AppCompatActivity() {
             isConService = false
         }
     }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.start_page)
@@ -42,11 +45,27 @@ class MainActivity : AppCompatActivity() {
 
     }
 
+    override fun onStart(){
+        Log.d("onStart","adsf")
+        val intent = Intent(this,BoundService::class.java)
+        serviceUnBind()
+        stopService(intent)
+        super.onStart()
+    }
+
+    override fun onUserLeaveHint() {
+        Log.d("onuserleave","실행")
+        val intent = Intent(this,BoundService::class.java)
+        ContextCompat.startForegroundService(this, intent)
+        super.onUserLeaveHint()
+    }
+
     override fun onDestroy() {
         serviceUnBind()
         boundService = Intent(this,BoundService::class.java)
         super.onDestroy()
     }
+
     fun serviceBind(theWayOfEating: String){
         boundService = Intent(this,BoundService::class.java)
         boundService.putExtra("the way of eating",theWayOfEating)
@@ -62,27 +81,22 @@ class MainActivity : AppCompatActivity() {
         }
 
     }
-//    override fun onUserLeaveHint() {
-//        val intent = Intent(this, BoundService::class.java)
-//        ContextCompat.startForegroundService(this, intent)
-//        startForegroundService(intent)
-//        super.onUserLeaveHint()
-//    }
-
 
     fun initEvent() {
         val eatThereButton = findViewById<Button>(R.id.eat_there_button)
         eatThereButton.setOnClickListener() {
             val intent = Intent(this, MenuSelectPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
             startActivity(intent)
-
             theWayOfEating = "포장해서 먹을래요"
             serviceBind(theWayOfEating)
+
 
         }
         val takeOutButton = findViewById<Button>(R.id.take_out_button)
         takeOutButton.setOnClickListener() {
             val intent = Intent(this, MenuSelectPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
             startActivity(intent)
             theWayOfEating = "매장에서 먹을래요"
             serviceBind(theWayOfEating)

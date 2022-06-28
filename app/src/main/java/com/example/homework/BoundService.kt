@@ -9,15 +9,29 @@ import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
+import android.view.Menu
 import android.widget.Toast
 import androidx.core.app.NotificationCompat
+import com.google.gson.Gson
 
 class BoundService : Service() {
-//    val NOTIFICATION_ID = 10
-//    val CHANNEL_ID = "My Service Channel"
-    var shoppingList = arrayListOf<ArrayList<String>>()
-    var dataList = arrayListOf<String>()
-    var wayOfEating = ""
+
+    var shoppingList = arrayListOf<String>()
+    var wayOfEating= ""
+    lateinit var menuSelection: MenuSelection
+    var menuAmount= ""
+    var menuSize= ""
+    val NOTIFICATION_ID = 10
+    val CHANNEL_ID = "primary_notification_channel"
+
+
+
+    data class MenuSelectionWithOption(
+        var selection: MenuSelection,
+        var amount: String,
+        var size: String
+    )
+
     override fun onBind(p0: Intent?): IBinder? {
         Log.d("onBind", "service 시작")
         wayOfEating = p0?.getStringExtra("the way of eating").toString()
@@ -29,43 +43,49 @@ class BoundService : Service() {
         Log.d("eatingWay", "${wayOfEating}")
     }
 
-    fun sendEatingWay(): String {
-
-        return wayOfEating
+    fun getSelectionData(data: String) {
+        val myData = Gson().fromJson(data,MenuSelection::class.java)
+        menuSelection = myData
     }
 
-    fun getData(data: ArrayList<String>) {
-        dataList = data
-        for (index in 0 until dataList.size) {
-            Log.d("getData", "${dataList[index]}")
-        }
-
+    fun sendSelectionData(): String{
+        val gsonData = Gson().toJson(menuSelection)
+        return gsonData
     }
 
-    fun addAmountData(amount: String) {
-        dataList.add(amount)
+    fun getAmountData(amount: String) {
+        menuAmount = amount
     }
 
-    fun addSizeData(size: String) {
-        dataList.add(size)
+    fun getSizeData(size: String) {
+        menuSize = size
     }
 
-    fun sendData(): ArrayList<String> {
-        return dataList
+    fun addShoppingList(){
+        val myData = MenuSelectionWithOption(menuSelection, menuAmount, menuSize)
+        val myMenuSelection = Gson().toJson(myData)
+        shoppingList.add(myMenuSelection)
     }
 
-    fun addShoppingList(data: ArrayList<String>) {
-        Log.d("addshoppinglist", "실행됨")
-        Log.d("adds", "${data[1]}")
-        shoppingList.add(data)
-        Log.d("pllus 한뒤", "${shoppingList.size}")
-    }
-
-    fun sendShoppingListData(): ArrayList<ArrayList<String>> {
+    fun sendShoppingList(): ArrayList<String>{
         return shoppingList
     }
 
+    fun getFinalShoppingList(data: ArrayList<String>){
+        shoppingList = data
+    }
+
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            createNotificationChannel()
+            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
+            builder.setContentTitle("EdiyaApp")
+            builder.setContentText("이디야 앱이 실행중입니다.")
+            builder.build()
+            val notification = builder.build()
+            Log.d("Test", "start foreground")
+            startForeground(NOTIFICATION_ID, notification)
+        }
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -75,37 +95,28 @@ class BoundService : Service() {
         }
     }
 
-//    fun createNotificationChannel() {
-//        val notificationChannel = NotificationChannel(
-//            CHANNEL_ID,
-//            "MyApp notification",
-//            NotificationManager.IMPORTANCE_HIGH
-//        )
-//        notificationChannel.enableLights(true)
-//        notificationChannel.enableVibration(true)
-//        notificationChannel.description = "AppApp Tests"
-//
-//        val notificationManager = applicationContext.getSystemService(
-//            Context.NOTIFICATION_SERVICE
-//        ) as NotificationManager
-//        notificationManager.createNotificationChannel(
-//            notificationChannel
-//        )
-//    }
+    fun createNotificationChannel() {
+        val notificationChannel = NotificationChannel(
+            CHANNEL_ID,
+            "EdiyaApp",
+            NotificationManager.IMPORTANCE_HIGH
+        )
+        notificationChannel.enableLights(true)
+        notificationChannel.enableVibration(true)
+        notificationChannel.description = "AppApp Tests"
 
-
-    override fun onCreate() {
-        Log.d("oncreate","service 실행됨")
-        super.onCreate()
+        val notificationManager = applicationContext.getSystemService(
+            Context.NOTIFICATION_SERVICE) as NotificationManager
+        notificationManager.createNotificationChannel(
+            notificationChannel)
     }
-
-
 
     override fun onDestroy() {
         Log.d("destory","service 종료")
         super.onDestroy()
     }
     val binder = MyBoundService()
+
 
 
 }

@@ -3,6 +3,7 @@ package com.example.homework
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
 import android.content.ServiceConnection
 import android.os.Bundle
 import android.os.IBinder
@@ -14,10 +15,12 @@ import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
+import com.bumptech.glide.Glide
+import com.google.gson.GsonBuilder
 
 class MenuSelectBeverageFragment: Fragment() {
     lateinit var boundService: Intent
-    var sendData = arrayListOf<String>()
+
     val beverageData = arrayOf(
         arrayOf("chocolate", "초콜릿", "3,700"),
         arrayOf("double_topinut_latte", "더블 토피넛 라떼", "4,300"),
@@ -28,6 +31,8 @@ class MenuSelectBeverageFragment: Fragment() {
         arrayOf("strawberry_juice", "딸기 주스", "3,900"),
         arrayOf("goldkiwi_juice", "골드 키위 주스", "3,900"),
     )
+
+    lateinit var beverageJsonArray: String
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection {
@@ -51,6 +56,7 @@ class MenuSelectBeverageFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.menu_select_coffee_fragment,container,false)
+        beverageArrayToJson()
         serviceBind()
         addView(view)
         return view
@@ -71,27 +77,54 @@ class MenuSelectBeverageFragment: Fragment() {
         serviceUnBind()
         super.onDestroy()
     }
-    fun addView(view: View) {
-        val linearLayout = view.findViewById<LinearLayout>(R.id.menu_select_page_fragment_linear_layout)
+
+    fun beverageArrayToJson() {
+        var temp = "["
         for (index in 0 until beverageData.size) {
+
+            var coffeeJsonData =
+                "{'menuImageSource': '${beverageData[index][0]}', 'menuName': '${beverageData[index][1]}', 'menuPrice': '${beverageData[index][2]}'}"
+            temp += coffeeJsonData
+            if (index < beverageData.size - 1) {
+                temp += ","
+            }
+        }
+        temp += "]"
+        beverageJsonArray = temp
+    }
+
+    fun addView(view: View) {
+        val gson = GsonBuilder()
+            .setPrettyPrinting()
+            .create()
+
+        val beverageGsonArray = gson.fromJson(beverageJsonArray,Array<MenuSelection>::class.java)
+        val linearLayout = view.findViewById<LinearLayout>(R.id.menu_select_page_fragment_linear_layout)
+        for (index in 0 until beverageGsonArray.size) {
             val customView = layoutInflater.inflate(R.layout.menu_custom_view, linearLayout, false)
 
             val id: Int =
                 resources.getIdentifier(//배열에 R.mipmap.~~ 이런식으로 저장하고 불러와서 .toInt()로 변환해서 넣으면 안돌아감. 배열에 mipmap 이름만 저장하고 이런식으로 불러오기
-                    beverageData[index][0],
+                    beverageGsonArray[index].menuImageSource,
                     "mipmap",
                     activity?.packageName
                 )
-            customView.findViewById<ImageView>(R.id.menu_image).setImageResource(id)
-            customView.findViewById<TextView>(R.id.menu_name).text = beverageData[index][1]
-            customView.findViewById<TextView>(R.id.menu_price).text = beverageData[index][2]
+            Glide
+                .with(view)
+                .load(id)
+                .placeholder(R.mipmap.extrasize)
+                .into(customView.findViewById<ImageView>(R.id.menu_image))
+//            customView.findViewById<ImageView>(R.id.menu_image).setImageResource(id)
+            customView.findViewById<TextView>(R.id.menu_name).text = beverageGsonArray[index].menuName
+            customView.findViewById<TextView>(R.id.menu_price).text = beverageGsonArray[index].menuPrice
 
             customView.setOnClickListener {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
+                intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
                 startActivity(intent)
-                sendData = arrayListOf(id.toString(), beverageData[index][1], beverageData[index][2])
-
-                myService?.getData(sendData)
+                val menu = MenuSelection(id.toString(), beverageGsonArray[index].menuName, beverageGsonArray[index].menuPrice)
+                val mySelection = gson.toJson(menu)
+                myService?.getSelectionData(mySelection)
             }
 
             linearLayout.addView(customView)

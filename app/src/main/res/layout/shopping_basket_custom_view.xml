@@ -31,8 +31,8 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.8"
-                android:text="믹스라떼"
                 android:paddingLeft="10dp"
+                android:text="믹스라떼"
                 android:textColor="@color/black"
                 android:textSize="20dp" />
 

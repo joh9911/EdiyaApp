@@ -2,6 +2,7 @@ package com.example.homework
 
 import android.app.Dialog
 import android.content.*
+import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
 import android.media.Image
 import android.os.Bundle
 import android.os.IBinder
@@ -9,13 +10,15 @@ import android.util.Log
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
+import com.google.gson.Gson
 import org.w3c.dom.Text
 
 class SelectOptionPageActivity : AppCompatActivity() {
     var amount = 1
     lateinit var boundService: Intent
     lateinit var sizeTextView: TextView
-    var dataList = arrayListOf<String>()
+    var menuSelection = ""
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection {
@@ -25,10 +28,8 @@ class SelectOptionPageActivity : AppCompatActivity() {
             myService = b.getService()
             isConService = true
             myService?.getEatingWay()
-            dataList = myService?.sendData()!!
-
-
-            settingMenu(dataList)
+            menuSelection = myService?.sendSelectionData()!!
+            settingMenu(menuSelection)
             sizeChangeButtonEvent()
             amountChangeButtonEvent()
         }
@@ -38,6 +39,21 @@ class SelectOptionPageActivity : AppCompatActivity() {
         }
     }
 
+    override fun onStart(){
+        Log.d("onStart","adsf")
+        val intent = Intent(this,BoundService::class.java)
+        serviceUnBind()
+        stopService(intent)
+        super.onStart()
+    }
+
+    override fun onUserLeaveHint() {
+        Log.d("onuserleave","실행")
+        val intent = Intent(this,BoundService::class.java)
+        ContextCompat.startForegroundService(this, intent)
+        super.onUserLeaveHint()
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.select_option_page)
@@ -45,14 +61,15 @@ class SelectOptionPageActivity : AppCompatActivity() {
         serviceBind()
         initEvent()
     }
+
     fun serviceBind(){
         boundService = Intent(this,BoundService::class.java)
         bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
         Log.d("SelectOptionPageAcitivy 내의 serviceBind","난 서비스 실행했음")
     }
+
     override fun onDestroy() {
         Log.d("destory","이거 되잖아")
-
         super.onDestroy()
     }
 
@@ -72,9 +89,9 @@ class SelectOptionPageActivity : AppCompatActivity() {
         val shoppingBasketButton = findViewById<ImageView>(R.id.shopping_basket_button)
         shoppingBasketButton.setOnClickListener {
             val intent = Intent(this, ShoppingBasketPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
             startActivity(intent)
         }
-
 
         val basketButton = findViewById<Button>(R.id.basket_button)
         basketButton.setOnClickListener {
@@ -82,27 +99,29 @@ class SelectOptionPageActivity : AppCompatActivity() {
             val dialog = AlertDialog.Builder(this)
                 .setView(view)
                 .create()
+
             dialog.setCancelable(false)
             val okButton = view.findViewById<Button>(R.id.ok_button)
 
             okButton.setOnClickListener {
                 dialog.dismiss()
-                myService?.addShoppingList(dataList)
-                myService?.addAmountData(amount.toString())
-                myService?.addSizeData(sizeTextView.text.toString())
+                myService?.getAmountData(amount.toString())
+                myService?.getSizeData(sizeTextView.text.toString())
+                myService?.addShoppingList()
             }
             dialog.show()
 
         }
     }
 
-    fun settingMenu(receiveData: ArrayList<String>) {
+    fun settingMenu(receiveData: String) {
+        val myMenuSelection = Gson().fromJson(receiveData, MenuSelection::class.java)
         val menuImage = findViewById<ImageView>(R.id.menu_image)
         val menuName = findViewById<TextView>(R.id.menu_name)
         val menuPrice = findViewById<TextView>(R.id.menu_price)
-        menuImage.setImageResource(receiveData[0].toInt())
-        menuName.text = receiveData[1]
-        menuPrice.text = receiveData[2]
+        menuImage.setImageResource(myMenuSelection.menuImageSource.toInt())
+        menuName.text = myMenuSelection.menuName
+        menuPrice.text = myMenuSelection.menuPrice
     }
 
     fun amountChangeButtonEvent(){
@@ -126,6 +145,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
         }
 
     }
+
     fun sizeChangeButtonEvent() {
 
         val view = layoutInflater.inflate(R.layout.select_size_option_dialog,null)

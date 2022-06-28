@@ -3,6 +3,7 @@ package com.example.homework
 import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
+import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
 import android.content.ServiceConnection
 import android.graphics.Typeface
 import android.os.Bundle
@@ -23,18 +24,27 @@ class MenuSelectPageActivity : AppCompatActivity() {
     lateinit var viewPagerAdapter: ViewPagerAdapter
     lateinit var tabLayout: TabLayout
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.menu_select_page)
-
         shoppingBasketButtoon()
         backButtonEvent()
         initAdapter()
 
     }
+    override fun onStart(){
+        Log.d("onStart","adsf")
+        val intent = Intent(this,BoundService::class.java)
+        stopService(intent)
+        super.onStart()
+    }
 
-
+    override fun onUserLeaveHint() {
+        Log.d("onuserleave","실행")
+        val intent = Intent(this,BoundService::class.java)
+        ContextCompat.startForegroundService(this, intent)
+        super.onUserLeaveHint()
+    }
 
     fun initAdapter() {
         val fragmentList = listOf(MenuSelectCoffeeFragment(), MenuSelectBeverageFragment(), MenuSelectAdeFragment(), MenuSelectBakeryFragment())
@@ -49,11 +59,11 @@ class MenuSelectPageActivity : AppCompatActivity() {
         }.attach()
     }
 
-
     fun shoppingBasketButtoon() {
         val shoppingBasketButton = findViewById<ImageView>(R.id.shopping_basket_button)
         shoppingBasketButton.setOnClickListener {
             val intent = Intent(this, ShoppingBasketPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
             startActivity(intent)
         }
     }
