@@ -16,21 +16,14 @@ import com.google.gson.Gson
 
 class BoundService : Service() {
 
-    var shoppingList = arrayListOf<String>()
+    var shoppingList = arrayListOf<MenuSelection>()
     var wayOfEating= ""
-    lateinit var menuSelection: MenuSelection
     var menuAmount= ""
     var menuSize= ""
+    lateinit var menuSelection: MenuSelection
     val NOTIFICATION_ID = 10
     val CHANNEL_ID = "primary_notification_channel"
 
-
-
-    data class MenuSelectionWithOption(
-        var selection: MenuSelection,
-        var amount: String,
-        var size: String
-    )
 
     override fun onBind(p0: Intent?): IBinder? {
         Log.d("onBind", "service 시작")
@@ -43,35 +36,33 @@ class BoundService : Service() {
         Log.d("eatingWay", "${wayOfEating}")
     }
 
-    fun getSelectionData(data: String) {
-        val myData = Gson().fromJson(data,MenuSelection::class.java)
-        menuSelection = myData
+    fun getSelectionData(data: MenuSelection) {
+        menuSelection = data
     }
 
-    fun sendSelectionData(): String{
-        val gsonData = Gson().toJson(menuSelection)
-        return gsonData
+    fun sendSelectionData(): MenuSelection{
+        return menuSelection
     }
 
     fun getAmountData(amount: String) {
         menuAmount = amount
+        menuSelection.amount = menuAmount
     }
 
     fun getSizeData(size: String) {
         menuSize = size
+        menuSelection.size = menuSize
     }
 
     fun addShoppingList(){
-        val myData = MenuSelectionWithOption(menuSelection, menuAmount, menuSize)
-        val myMenuSelection = Gson().toJson(myData)
-        shoppingList.add(myMenuSelection)
+        shoppingList.add(menuSelection)
     }
 
-    fun sendShoppingList(): ArrayList<String>{
+    fun sendShoppingList(): ArrayList<MenuSelection>{
         return shoppingList
     }
 
-    fun getFinalShoppingList(data: ArrayList<String>){
+    fun getFinalShoppingList(data: ArrayList<MenuSelection>){
         shoppingList = data
     }
 
@@ -79,9 +70,9 @@ class BoundService : Service() {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             createNotificationChannel()
             val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            builder.setContentTitle("EdiyaApp")
-            builder.setContentText("이디야 앱이 실행중입니다.")
-            builder.build()
+            .setContentTitle("EdiyaApp")
+            .setContentText("이디야 앱이 실행중입니다.")
+            builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
             val notification = builder.build()
             Log.d("Test", "start foreground")
             startForeground(NOTIFICATION_ID, notification)
@@ -99,7 +90,7 @@ class BoundService : Service() {
         val notificationChannel = NotificationChannel(
             CHANNEL_ID,
             "EdiyaApp",
-            NotificationManager.IMPORTANCE_HIGH
+            NotificationManager.IMPORTANCE_DEFAULT
         )
         notificationChannel.enableLights(true)
         notificationChannel.enableVibration(true)

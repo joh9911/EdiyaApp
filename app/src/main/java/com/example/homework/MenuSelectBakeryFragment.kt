@@ -20,17 +20,8 @@ import com.google.gson.GsonBuilder
 
 class MenuSelectBakeryFragment: Fragment() {
     lateinit var boundService: Intent
-    val bakeryData = arrayOf(
-        arrayOf("square_pizza", "하와이완 스퀘어 피자", "4,200"),
-        arrayOf("sweetpotato_square_pizza", "불닭 고구마 스퀘어 피자", "4,200"),
-        arrayOf("chocolate_cookie", "초콜릿 청크 쿠키", "1,900"),
-        arrayOf("strawberry_croffle", "생딸기 크로플", "3,000"),
-        arrayOf("strawberry_bread", "생딸기 연유 브레드", "4,500"),
-        arrayOf("strawberry_waffle", "생딸기 와플", "3,500"),
-        arrayOf("sandwitch", "햄앤치즈 샌드 위치", "1,900"),
-        arrayOf("mini_scon", "미니 스콘", "2,900"),
-    )
-    lateinit var bakeryJsonArray: String
+
+    var bakeryJsonFile = JsonFile.beverageJsonFile
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection {
@@ -55,7 +46,7 @@ class MenuSelectBakeryFragment: Fragment() {
     ): View? {
 
         val view = inflater.inflate(R.layout.menu_select_coffee_fragment,container,false)
-        bakeryArrayToJson()
+//        bakeryArrayToJson()
         serviceBind()
         addView(view)
         return view
@@ -77,25 +68,26 @@ class MenuSelectBakeryFragment: Fragment() {
         serviceUnBind()
         super.onDestroy()
     }
-    fun bakeryArrayToJson() {
-        var temp = "["
-        for (index in 0 until bakeryData.size) {
-
-            var coffeeJsonData =
-                "{'menuImageSource': '${bakeryData[index][0]}', 'menuName': '${bakeryData[index][1]}', 'menuPrice': '${bakeryData[index][2]}'}"
-            temp += coffeeJsonData
-            if (index < bakeryData.size - 1) {
-                temp += ","
-            }
-        }
-        temp += "]"
-        bakeryJsonArray = temp
-    }
+//    fun bakeryArrayToJson() {
+//        var temp = "["
+//        for (index in 0 until bakeryData.size) {
+//
+//            var coffeeJsonData =
+//                "{'menuImageSource': '${bakeryData[index][0]}', 'menuName': '${bakeryData[index][1]}', 'menuPrice': '${bakeryData[index][2]}'}"
+//            temp += coffeeJsonData
+//            if (index < bakeryData.size - 1) {
+//                temp += ","
+//            }
+//        }
+//        temp += "]"
+//        bakeryJsonArray = temp
+//        Log.d("1","${bakeryJsonArray}")
+//    }
     fun addView(view: View) {
         val gson = GsonBuilder()
             .setPrettyPrinting()
             .create()
-        val bakeryGsonArray = gson.fromJson(bakeryJsonArray,Array<MenuSelection>::class.java)
+        val bakeryGsonArray = gson.fromJson(bakeryJsonFile,Array<MenuSelection>::class.java)
         val linearLayout = view.findViewById<LinearLayout>(R.id.menu_select_page_fragment_linear_layout)
         for (index in 0 until bakeryGsonArray.size) {
             val customView = layoutInflater.inflate(R.layout.menu_custom_view, linearLayout, false)
@@ -119,9 +111,8 @@ class MenuSelectBakeryFragment: Fragment() {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
                 intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
                 startActivity(intent)
-                val menu = MenuSelection(id.toString(), bakeryGsonArray[index].menuName, bakeryGsonArray[index].menuPrice)
-                val mySelection = gson.toJson(menu)
-                myService?.getSelectionData(mySelection)
+                val menu = MenuSelection(id.toString(), bakeryGsonArray[index].menuName, bakeryGsonArray[index].menuPrice, null, null)
+                myService?.getSelectionData(menu)
             }
 
             linearLayout.addView(customView)

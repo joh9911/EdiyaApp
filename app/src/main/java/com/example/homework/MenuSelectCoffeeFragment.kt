@@ -26,19 +26,7 @@ import java.io.Serializable
 class MenuSelectCoffeeFragment: Fragment() {
     lateinit var boundService: Intent
 
-    val coffeeData = arrayOf(
-        arrayOf("americano", "카페 아메리카노", "3,200"),
-        arrayOf("caffelatte", "카페 라떼", "3,700"),
-        arrayOf("vanillalatte", "바닐라 라떼", "3,900"),
-        arrayOf("capuchino", "카푸치노", "3,700"),
-        arrayOf("cafemoca", "카페 모카", "3,900"),
-        arrayOf("maggiyatto", "카라멜 마끼야또", "3,900"),
-        arrayOf("whitechocolatemoca", "화이트 초콜렛 모카", "3,900"),
-        arrayOf("mintmoca", "민트 모카", "4,200"),
-        arrayOf("mixlatte", "믹스 라떼", "3,800"),
-        )
-
-    lateinit var coffeeJsonArray: String
+    var coffeeJsonFile= JsonFile.coffeeJsonFile
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection {
@@ -62,7 +50,6 @@ class MenuSelectCoffeeFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.menu_select_coffee_fragment,container,false)
-        coffeeArrayToJson()
         serviceBind()
         addView(view)
         return view
@@ -87,20 +74,21 @@ class MenuSelectCoffeeFragment: Fragment() {
         }
     }
 
-    fun coffeeArrayToJson() {
-        var temp = "["
-        for (index in 0 until coffeeData.size) {
-
-            var coffeeJsonData =
-            "{'menuImageSource': '${coffeeData[index][0]}', 'menuName': '${coffeeData[index][1]}', 'menuPrice': '${coffeeData[index][2]}'}"
-            temp += coffeeJsonData
-            if (index < coffeeData.size - 1) {
-                temp += ","
-            }
-        }
-        temp += "]"
-        coffeeJsonArray = temp
-    }
+//    fun coffeeArrayToJson() {
+//        var temp = "["
+//        for (index in 0 until coffeeData.size) {
+//
+//            var coffeeJsonData =
+//            "{'menuImageSource': '${coffeeData[index][0]}', 'menuName': '${coffeeData[index][1]}', 'menuPrice': '${coffeeData[index][2]}'}"
+//            temp += coffeeJsonData
+//            if (index < coffeeData.size - 1) {
+//                temp += ","
+//            }
+//        }
+//        temp += "]"
+//        coffeeJsonArray = temp
+//        Log.d("1","${coffeeJsonArray}")
+//    }
 
 
     fun addView(view: View) {
@@ -109,7 +97,7 @@ class MenuSelectCoffeeFragment: Fragment() {
             .setPrettyPrinting()
             .create()
 
-        val coffeeGsonArray = gson.fromJson(coffeeJsonArray,Array<MenuSelection>::class.java)
+        val coffeeGsonArray = gson.fromJson(coffeeJsonFile,Array<MenuSelection>::class.java)
         val linearLayout = view.findViewById<LinearLayout>(R.id.menu_select_page_fragment_linear_layout)
         for (index in 0 until coffeeGsonArray.size) {
             val customView = layoutInflater.inflate(R.layout.menu_custom_view, linearLayout, false)
@@ -126,7 +114,6 @@ class MenuSelectCoffeeFragment: Fragment() {
                 .load(id)
                 .placeholder(R.mipmap.extrasize)
                 .into(customView.findViewById<ImageView>(R.id.menu_image))
-//            customView.findViewById<ImageView>(R.id.menu_image).setImageResource(id)
             customView.findViewById<TextView>(R.id.menu_name).text = coffeeGsonArray[index].menuName
             customView.findViewById<TextView>(R.id.menu_price).text = coffeeGsonArray[index].menuPrice
 
@@ -134,10 +121,8 @@ class MenuSelectCoffeeFragment: Fragment() {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
                 intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
                 startActivity(intent)
-                val menu = MenuSelection(id.toString(), coffeeGsonArray[index].menuName, coffeeGsonArray[index].menuPrice)
-                val mySelection = gson.toJson(menu)
-                myService?.getSelectionData(mySelection)
-
+                val menu = MenuSelection(id.toString(), coffeeGsonArray[index].menuName, coffeeGsonArray[index].menuPrice, null, null)
+                myService?.getSelectionData(menu)
 
             }
 

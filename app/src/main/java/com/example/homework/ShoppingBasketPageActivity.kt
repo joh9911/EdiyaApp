@@ -8,6 +8,7 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.Parcelable
 import android.util.Log
+import android.view.Menu
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -26,7 +27,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
     lateinit var customView: View
 
     val deleteIndex = arrayListOf<Int>()
-    var shoppingList = arrayListOf<String>()
+    var shoppingList = arrayListOf<MenuSelection>()
 
     var myService: BoundService? = null
     var isConService = false
@@ -158,16 +159,11 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                         val name = child.findViewById<TextView>(R.id.menu_name).text //체크가 된 인덱스의 child의 메뉴 이름
 
                         for (index1 in 0 until shoppingList.size){ //저 메뉴 이름과 저장된 shoppingList 안의 Gson 데이터의 메뉴 이름과 비교해서
-                            val myShoppingList = Gson().fromJson( // 일치하는 항목의 amount를 1 빼준다.
-                                shoppingList[index1],
-                                BoundService.MenuSelectionWithOption::class.java
-                            )
-                            if (name == myShoppingList.selection.menuName){
-                                var amount = myShoppingList.amount.toInt()
+                             // 일치하는 항목의 amount를 1 빼준다.
+                            if (name == shoppingList[index1].menuName){
+                                var amount = shoppingList[index1].amount?.toInt()!!
                                 amount -= 1
-                                myShoppingList.amount = amount.toString()
-                                val data = Gson().toJson(myShoppingList)
-                                shoppingList.set(index1, data)
+                                shoppingList[index1].amount = amount.toString()
                             }
 
                         }
@@ -212,16 +208,12 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         }
     }
 
-    fun addShoppingListView(shoppingList: ArrayList<String>) {
+    fun addShoppingListView(shoppingList: ArrayList<MenuSelection>) {
         var count = 0
         var allAmount = 0
         var allPrice = 0
         for (index in 0 until shoppingList.size) {
-            val myShoppingList = Gson().fromJson(
-                shoppingList[index],
-                BoundService.MenuSelectionWithOption::class.java
-            )
-            for (amount in 0 until myShoppingList.amount.toInt()) {
+            for (amount in 0 until shoppingList[index].amount?.toInt()!!) {
 
                     customView = layoutInflater.inflate(
                         R.layout.shopping_basket_custom_view,
@@ -231,15 +223,15 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                     customView.findViewById<CheckBox>(R.id.waste_check_button).visibility =
                         View.GONE
                     customView.findViewById<TextView>(R.id.menu_name).text =
-                        myShoppingList.selection.menuName
+                        shoppingList[index].menuName
                     customView.findViewById<TextView>(R.id.menu_price).text =
-                        myShoppingList.selection.menuPrice
-                    customView.findViewById<TextView>(R.id.sub_option).text = myShoppingList.size
+                        shoppingList[index].menuPrice
+                    customView.findViewById<TextView>(R.id.sub_option).text = shoppingList[index].size
                     customView.findViewById<TextView>(R.id.sub_price).text =
-                        myShoppingList.selection.menuPrice
+                        shoppingList[index].menuPrice
                     allAmount += 1
-                    val a = myShoppingList.selection.menuPrice.substring(0 until 1)
-                    val b = myShoppingList.selection.menuPrice.substring(2 until 5)
+                    val a = shoppingList[index].menuPrice.substring(0 until 1)
+                    val b = shoppingList[index].menuPrice.substring(2 until 5)
                     val c = a + b
                     allPrice += c.toInt()
                     linearLayout.addView(customView)

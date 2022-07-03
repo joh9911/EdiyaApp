@@ -18,7 +18,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
     var amount = 1
     lateinit var boundService: Intent
     lateinit var sizeTextView: TextView
-    var menuSelection = ""
+    lateinit var menuSelection: MenuSelection
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection {
@@ -114,14 +114,13 @@ class SelectOptionPageActivity : AppCompatActivity() {
         }
     }
 
-    fun settingMenu(receiveData: String) {
-        val myMenuSelection = Gson().fromJson(receiveData, MenuSelection::class.java)
+    fun settingMenu(receiveData: MenuSelection) {
         val menuImage = findViewById<ImageView>(R.id.menu_image)
         val menuName = findViewById<TextView>(R.id.menu_name)
         val menuPrice = findViewById<TextView>(R.id.menu_price)
-        menuImage.setImageResource(myMenuSelection.menuImageSource.toInt())
-        menuName.text = myMenuSelection.menuName
-        menuPrice.text = myMenuSelection.menuPrice
+        menuImage.setImageResource(receiveData.menuImageSource.toInt())
+        menuName.text = receiveData.menuName
+        menuPrice.text = receiveData.menuPrice
     }
 
     fun amountChangeButtonEvent(){
