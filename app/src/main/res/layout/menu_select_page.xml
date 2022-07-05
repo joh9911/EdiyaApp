@@ -79,6 +79,13 @@
             android:text="베이커리"
             android:textColor="@color/black"
             android:textSize="20dp"/>
+        <com.google.android.material.tabs.TabItem
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@drawable/menu_button_left_border"
+            android:text="gkgk"
+            android:textColor="@color/black"
+            android:textSize="20dp"/>
     </com.google.android.material.tabs.TabLayout>
 <!--    <LinearLayout-->
 <!--        android:id="@+id/menu_categori"-->

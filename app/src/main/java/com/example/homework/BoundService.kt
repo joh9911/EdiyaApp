@@ -20,6 +20,8 @@ class BoundService : Service() {
     var wayOfEating= ""
     var menuAmount= ""
     var menuSize= ""
+    var isLogin = false
+    var Id = ""
     lateinit var menuSelection: MenuSelection
     val NOTIFICATION_ID = 10
     val CHANNEL_ID = "primary_notification_channel"
@@ -30,6 +32,16 @@ class BoundService : Service() {
         wayOfEating = p0?.getStringExtra("the way of eating").toString()
 
         return binder
+    }
+    fun login(id: String){
+        isLogin = true
+        Id = id
+    }
+    fun getMyId(): String{
+        return Id
+    }
+    fun getLoginStatus(): Boolean{
+        return isLogin
     }
 
     fun getEatingWay() {
@@ -106,6 +118,7 @@ class BoundService : Service() {
         Log.d("destory","service 종료")
         super.onDestroy()
     }
+
     val binder = MyBoundService()
 
 

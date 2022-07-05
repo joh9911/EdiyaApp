@@ -19,12 +19,19 @@ import androidx.core.view.isGone
 import com.google.android.material.internal.ParcelableSparseArray
 import com.google.gson.Gson
 import org.w3c.dom.Text
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
 import java.lang.NullPointerException
 
 class ShoppingBasketPageActivity: AppCompatActivity() {
     lateinit var boundService: Intent
     lateinit var linearLayout: LinearLayout
     lateinit var customView: View
+
+    lateinit var retrofit: Retrofit  //connect   걍 외우셈
+    lateinit var retrofitHttp: RetrofitService  //cursor
 
     val deleteIndex = arrayListOf<Int>()
     var shoppingList = arrayListOf<MenuSelection>()
@@ -62,13 +69,18 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         deleteProcessConfirmButton.visibility = View.GONE
 
         linearLayout = findViewById(R.id.shopping_basket_linear_layout)
-
+        initRetrofit()
         serviceBind()
         backButtonEvent()
         wasteButtonEvent()
         deleteProcessConfirmButtonEvent()
         orderButtonEvent()
 
+    }
+
+    fun initRetrofit() {
+        retrofit = RetrofitClient.initRetrofit() // 걍 외우셈
+        retrofitHttp = retrofit!!.create(RetrofitService::class.java)
     }
 
     fun serviceBind() {
@@ -86,17 +98,17 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
 
     }
 
-    override fun onStart(){
-        Log.d("onStart","adsf")
-        val intent = Intent(this,BoundService::class.java)
+    override fun onStart() {
+        Log.d("onStart", "adsf")
+        val intent = Intent(this, BoundService::class.java)
         serviceUnBind()
         stopService(intent)
         super.onStart()
     }
 
     override fun onUserLeaveHint() {
-        Log.d("onuserleave","실행")
-        val intent = Intent(this,BoundService::class.java)
+        Log.d("onuserleave", "실행")
+        val intent = Intent(this, BoundService::class.java)
         ContextCompat.startForegroundService(this, intent)
         super.onUserLeaveHint()
     }
@@ -137,8 +149,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                         checkBox.isChecked = true
                     }
                     tag = 0
-                }
-                else if (tag == 0){
+                } else if (tag == 0) {
                     val count = linearLayout.childCount
                     for (index in 0 until count) {
                         val child = linearLayout.getChildAt(index)
@@ -156,27 +167,29 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                     val checkBox = child.findViewById<CheckBox>(R.id.waste_check_button)
 
                     if (checkBox.isChecked) { // 만약 체크가 됐다면,
-                        val name = child.findViewById<TextView>(R.id.menu_name).text //체크가 된 인덱스의 child의 메뉴 이름
+                        val name =
+                            child.findViewById<TextView>(R.id.menu_name).text //체크가 된 인덱스의 child의 메뉴 이름
 
-                        for (index1 in 0 until shoppingList.size){ //저 메뉴 이름과 저장된 shoppingList 안의 Gson 데이터의 메뉴 이름과 비교해서
-                             // 일치하는 항목의 amount를 1 빼준다.
-                            if (name == shoppingList[index1].menuName){
+                        for (index1 in 0 until shoppingList.size) { //저 메뉴 이름과 저장된 shoppingList 안의 Gson 데이터의 메뉴 이름과 비교해서
+                            // 일치하는 항목의 amount를 1 빼준다.
+                            if (name == shoppingList[index1].menuName) {
                                 var amount = shoppingList[index1].amount?.toInt()!!
                                 amount -= 1
                                 shoppingList[index1].amount = amount.toString()
                             }
-
                         }
-                        deleteIndex.add(index)  // 체크된 인덱스들 저장
                     } else {
                     }
+
                 }
                 deleteButton.visibility = View.INVISIBLE
                 selectAllButton.visibility = View.INVISIBLE
                 orderConfirmButton.visibility = View.VISIBLE
                 deleteProcessConfirmButton.visibility = View.GONE
                 wasteButton.visibility = View.VISIBLE
+
                 linearLayout.removeAllViews()
+
                 addShoppingListView(shoppingList)
                 myService?.getFinalShoppingList(shoppingList)
             }
@@ -191,6 +204,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
             findViewById<Button>(R.id.select_all_button).visibility = View.INVISIBLE
             findViewById<ImageView>(R.id.waste_button).visibility = View.VISIBLE
             findViewById<Button>(R.id.order_confirm_button).visibility = View.VISIBLE
+
             val count = linearLayout.childCount
             for (index in 0 until count) {
                 val child = linearLayout.getChildAt(index)
@@ -209,32 +223,30 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
     }
 
     fun addShoppingListView(shoppingList: ArrayList<MenuSelection>) {
-        var count = 0
         var allAmount = 0
         var allPrice = 0
         for (index in 0 until shoppingList.size) {
             for (amount in 0 until shoppingList[index].amount?.toInt()!!) {
 
-                    customView = layoutInflater.inflate(
-                        R.layout.shopping_basket_custom_view,
-                        linearLayout,
-                        false
-                    )
-                    customView.findViewById<CheckBox>(R.id.waste_check_button).visibility =
-                        View.GONE
-                    customView.findViewById<TextView>(R.id.menu_name).text =
-                        shoppingList[index].menuName
-                    customView.findViewById<TextView>(R.id.menu_price).text =
-                        shoppingList[index].menuPrice
-                    customView.findViewById<TextView>(R.id.sub_option).text = shoppingList[index].size
-                    customView.findViewById<TextView>(R.id.sub_price).text =
-                        shoppingList[index].menuPrice
-                    allAmount += 1
-                    val a = shoppingList[index].menuPrice.substring(0 until 1)
-                    val b = shoppingList[index].menuPrice.substring(2 until 5)
-                    val c = a + b
-                    allPrice += c.toInt()
-                    linearLayout.addView(customView)
+                customView = layoutInflater.inflate(
+                    R.layout.shopping_basket_custom_view,
+                    linearLayout,
+                    false
+                )
+                customView.findViewById<CheckBox>(R.id.waste_check_button).visibility = View.GONE
+                customView.findViewById<TextView>(R.id.menu_name).text =
+                    shoppingList[index].menuName
+                customView.findViewById<TextView>(R.id.menu_price).text =
+                    shoppingList[index].menuPrice
+                customView.findViewById<TextView>(R.id.sub_option).text = shoppingList[index].size
+                customView.findViewById<TextView>(R.id.sub_price).text =
+                    shoppingList[index].menuPrice
+                allAmount += 1
+                val a = shoppingList[index].menuPrice.substring(0 until 1)
+                val b = shoppingList[index].menuPrice.substring(2 until 5)
+                val c = a + b
+                allPrice += c.toInt()
+                linearLayout.addView(customView)
             }
         }
         itemSummary(allAmount, allPrice)
@@ -247,23 +259,92 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         allPriceText.text = "${allPrice} 원"
     }
 
-    fun orderButtonEvent(){
+    fun orderButtonEvent() {
         val orderButton = findViewById<Button>(R.id.order_confirm_button)
         orderButton.setOnClickListener {
-            val dialog = AlertDialog.Builder(this)
-            dialog.setTitle("주문")
-            dialog.setMessage("주문을 완료하였습니다.")
-
-            dialog.apply{
-                setPositiveButton("OK") {dialog, which ->
+            if (myService?.getLoginStatus()!! == false) { // 로그인을 해야지만 주문을 할 수가 있음
+                val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog, null)
+                val dialog = AlertDialog.Builder(this)
+                    .setView(view)
+                    .create()
+                view.findViewById<TextView>(R.id.message).textSize
+                view.findViewById<TextView>(R.id.message).text = "로그인이 필요한 서비스입니다.\n로그인하시겠습니까?"
+                dialog.setCancelable(false)
+                val yesButton = view.findViewById<Button>(R.id.yes_button)
+                val noButton = view.findViewById<Button>(R.id.no_button)
+                yesButton.setOnClickListener {
                     dialog.dismiss()
+                    val intent = Intent(this, LoginPageActivity::class.java)
+                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
+                    startActivity(intent)
+                }
+                noButton.setOnClickListener {
+                    dialog.dismiss()
+                }
+                dialog.show()
+            } else {
+                for (index in 0 until shoppingList.size) {
+                    var requestData: HashMap<String, Any> = HashMap()
+
+                    var allPrice = 0
+                    val a = shoppingList[index].menuPrice.substring(0 until 1)//계산 과정
+                    val b = shoppingList[index].menuPrice.substring(2 until 5)
+                    val c = a + b
+                    allPrice = c.toInt() * shoppingList[index].amount?.toInt()!!
+
+                    var myOrderList = orderList(
+                        name = shoppingList[index].menuName,
+                        count = shoppingList[index].amount?.toInt()!!,
+                        sum_price = allPrice
+                    )
+
+                    var list = listOf(myOrderList)
+                    requestData["id"] = myService!!.getMyId()
+                    requestData["order_list"] = list
+                    requestData["total_price"] = list[0].sum_price
+
+                    retrofitHttp.postOrderMenu(
+                        requestData
+                    ).enqueue(object : Callback<AccountData> {
+
+                        override fun onFailure(
+                            call: Call<AccountData>,
+                            t: Throwable
+                        ) {
+                            Log.d("result", "Request Fail: ${t}")
+                        }
+
+                        override fun onResponse(
+                            call: Call<AccountData>,
+                            response: Response<AccountData>
+                        ) {
+                            if (response.body()!!.success) {
+                                Log.d("result", "Request success")
+                                val view = layoutInflater.inflate(R.layout.message_dialog,null)
+                                findViewById<TextView>(R.id.message).text = "주문이 완료되었습니다"
+                                val dialog = AlertDialog.Builder(this@ShoppingBasketPageActivity)
+                                    .setView(view)
+                                    .create()
+                                dialog.setCancelable(false)
+                                val okButton = view.findViewById<Button>(R.id.ok_button)
+
+                                okButton.setOnClickListener {
+                                    dialog.dismiss()
+                                    finish()
+                                }
+                                dialog.show()
+
+                            } else {
+                                Log.d("result", "${response.body()!!.message}")
+                            }
+                        }
+
+                    })
                 }
 
             }
-            dialog.create()
-            dialog.show()
-        }
 
+        }
     }
 }
 

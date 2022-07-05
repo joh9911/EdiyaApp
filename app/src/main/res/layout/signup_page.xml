@@ -1,0 +1,270 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <TextView
+        android:id="@+id/ediya_logo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/ediya_color"
+        android:gravity="center"
+        android:paddingTop="20dp"
+        android:paddingBottom="20dp"
+        android:text="EDIYA"
+        android:textColor="@color/white"
+        android:textSize="30dp"
+        android:textStyle="bold"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+
+    <ImageButton
+        android:id="@+id/back_button"
+        android:layout_width="80dp"
+        android:layout_height="80dp"
+        android:adjustViewBounds="true"
+        android:background="@color/ediya_color"
+        android:scaleType="fitXY"
+        android:src="@mipmap/backbutton"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"/>
+
+
+    <ScrollView
+        android:id="@+id/signup_scroll_view"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@id/signup_page_signup_button"
+        app:layout_constraintTop_toBottomOf="@id/ediya_logo"
+        >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintWidth_percent="0.8"
+            android:padding="20dp">
+
+            <LinearLayout
+                android:id="@+id/signup_id_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                app:layout_constraintTop_toBottomOf="@id/ediya_logo">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.8"
+                        android:text="아이디"
+                        android:textColor="@color/black"
+                        android:textStyle="bold" />
+
+                    <TextView
+                        android:id="@+id/signup_id_check"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="0.2"
+                        android:gravity="right"
+                        android:text="중복체크"
+                        android:textColor="#FF0000" />
+
+                </LinearLayout>
+
+
+                <EditText
+                    android:id="@+id/signup_id_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/box_border"
+                    android:padding="10dp"
+                    android:paddingLeft="10dp"
+                    android:textSize="15dp"
+                    android:elevation="5dp"/>
+
+                <TextView
+                    android:id="@+id/signup_id_alert_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000" />
+
+            </LinearLayout>
+
+
+            <LinearLayout
+                android:id="@+id/signup_pw_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/signup_id_linearlayout"
+                app:layout_constraintWidth_percent="0.9">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="비밀번호"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/signup_pw_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/box_border"
+                    android:padding="10dp"
+                    android:paddingLeft="10dp"
+                    android:textSize="15dp"
+                    android:inputType="textPassword"
+                    android:maxLength="10"
+                    android:elevation="5dp"/>
+
+                <TextView
+                    android:id="@+id/signup_pw_alert_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/signup_pw_confirm_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/signup_pw_linearlayout"
+                app:layout_constraintWidth_percent="0.9">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="비밀번호 확인"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/signup_pw_confirm_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/box_border"
+                    android:padding="10dp"
+                    android:paddingLeft="10dp"
+                    android:textSize="15dp"
+                    android:inputType="textPassword"
+                    android:maxLength="10"
+                    android:elevation="5dp"/>
+
+                <TextView
+                    android:id="@+id/signup_pw_confirm_alert_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/signup_name_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/signup_pw_confirm_linearlayout"
+                app:layout_constraintWidth_percent="0.9">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="이름"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/signup_name_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/box_border"
+                    android:padding="10dp"
+                    android:paddingLeft="10dp"
+                    android:textSize="15dp"
+                    android:maxLength="10"
+                    android:elevation="5dp"/>
+
+                <TextView
+                    android:id="@+id/signup_name_alert_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/signup_contact_linearlayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingTop="10dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/signup_name_linearlayout"
+                app:layout_constraintWidth_percent="0.9">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="전화번호"
+                    android:textColor="@color/black"
+                    android:textStyle="bold" />
+
+                <EditText
+                    android:id="@+id/signup_contact_edittext"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:background="@drawable/box_border"
+                    android:padding="10dp"
+                    android:paddingLeft="10dp"
+                    android:textSize="15dp"
+                    android:maxLength="11"
+                    android:elevation="5dp"/>
+
+                <TextView
+                    android:id="@+id/signup_contact_alert_message"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:textColor="#FF0000" />
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+    <Button
+        android:id="@+id/signup_page_signup_button"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/ediya_logo"
+        app:layout_constraintVertical_bias="0.85"
+        app:layout_constraintWidth_percent="0.9"
+        android:background="@color/border_color"
+        android:text="회원가입"
+        android:textSize="20dp"/>
+
+
+
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

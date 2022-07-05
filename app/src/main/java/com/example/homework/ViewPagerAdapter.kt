@@ -15,6 +15,8 @@ class ViewPagerAdapter (fragmentActivity: FragmentActivity): FragmentStateAdapte
             1 -> return MenuSelectBeverageFragment()
             2 -> return MenuSelectAdeFragment()
             3 -> return MenuSelectBakeryFragment()
+            4 -> return MenuSelectGetCategoryFragment()
+            5 -> return MenuSelectGetCategoryAnotherFragment()
         }
         return MenuSelectCoffeeFragment()
     }

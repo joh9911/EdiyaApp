@@ -1,9 +1,7 @@
 package com.example.homework
 
-import android.app.Dialog
 import android.content.*
 import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
-import android.media.Image
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -11,14 +9,24 @@ import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import com.google.gson.Gson
-import org.w3c.dom.Text
+import com.bumptech.glide.Glide
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import java.lang.System.load
 
 class SelectOptionPageActivity : AppCompatActivity() {
     var amount = 1
     lateinit var boundService: Intent
     lateinit var sizeTextView: TextView
     lateinit var menuSelection: MenuSelection
+
+    lateinit var retrofit: Retrofit  //connect   걍 외우셈
+    lateinit var retrofitHttp: RetrofitService  //cursor
+
+
+
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection {
@@ -32,12 +40,14 @@ class SelectOptionPageActivity : AppCompatActivity() {
             settingMenu(menuSelection)
             sizeChangeButtonEvent()
             amountChangeButtonEvent()
+            orderButtonEvent(menuSelection)
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
             isConService = false
         }
     }
+
 
     override fun onStart(){
         Log.d("onStart","adsf")
@@ -59,7 +69,13 @@ class SelectOptionPageActivity : AppCompatActivity() {
         setContentView(R.layout.select_option_page)
         sizeTextView = findViewById<TextView>(R.id.size_text)
         serviceBind()
+        initRetrofit()
         initEvent()
+    }
+
+    fun initRetrofit() {
+        retrofit = RetrofitClient.initRetrofit() // 걍 외우셈
+        retrofitHttp = retrofit!!.create(RetrofitService::class.java)
     }
 
     fun serviceBind(){
@@ -95,7 +111,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
 
         val basketButton = findViewById<Button>(R.id.basket_button)
         basketButton.setOnClickListener {
-            val view = layoutInflater.inflate(R.layout.select_option_page_basket_button_dialog,null)
+            val view = layoutInflater.inflate(R.layout.message_dialog,null)
             val dialog = AlertDialog.Builder(this)
                 .setView(view)
                 .create()
@@ -113,12 +129,106 @@ class SelectOptionPageActivity : AppCompatActivity() {
 
         }
     }
+    fun orderButtonEvent(receiveData: MenuSelection){
+        val orderButton = findViewById<Button>(R.id.order_button)
+        orderButton.setOnClickListener {
+            if (myService?.getLoginStatus()!! == false){ // 로그인을 해야지만 주문을 할 수가 있음
+                val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog,null)
+                val dialog = AlertDialog.Builder(this)
+                    .setView(view)
+                    .create()
+                view.findViewById<TextView>(R.id.message).textSize
+                view.findViewById<TextView>(R.id.message).text = "로그인이 필요한 서비스입니다.\n로그인하시겠습니까?"
+                dialog.setCancelable(false)
+                val yesButton = view.findViewById<Button>(R.id.yes_button)
+                val noButton = view.findViewById<Button>(R.id.no_button)
+                yesButton.setOnClickListener {
+                    dialog.dismiss()
+                    val intent = Intent(this, LoginPageActivity::class.java)
+                    intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+                    startActivity(intent)
+                }
+                noButton.setOnClickListener {
+                    dialog.dismiss()
+                }
+                dialog.show()
+            }
+
+            else{
+
+                var requestData: HashMap<String, Any> = HashMap()
+
+                var allPrice = 0
+                val a = receiveData.menuPrice.substring(0 until 1)//계산 과정
+                val b = receiveData.menuPrice.substring(2 until 5)
+                val c = a + b
+                allPrice = c.toInt()*amount
+
+                var myOrderList = orderList(
+                    name = receiveData.menuName,
+                    count = amount,
+                    sum_price = allPrice
+                )
+
+                var list = listOf(myOrderList)
+                requestData["id"] = myService!!.getMyId()
+                requestData["order_list"] = list
+                requestData["total_price"] = list[0].sum_price
+
+                retrofitHttp.postOrderMenu(
+                    requestData
+                ).enqueue(object: Callback<AccountData> {
+
+                    override fun onFailure(
+                        call: Call<AccountData>,
+                        t: Throwable
+                    ) { // 통신 실패하면 이게 뜸
+                        Log.d("result", "Request Fail: ${t}") // t는 통신 실패 이유
+                    }
+
+                    override fun onResponse(
+                        call: Call<AccountData>,
+                        response: Response<AccountData>
+                    ) {
+                        if (response.body()!!.success) {
+                            val view = layoutInflater.inflate(R.layout.message_dialog,null)
+                            findViewById<TextView>(R.id.message).text = "주문이 완료되었습니다"
+                            val dialog = AlertDialog.Builder(this@SelectOptionPageActivity)
+                                .setView(view)
+                                .create()
+                            dialog.setCancelable(false)
+                            val okButton = view.findViewById<Button>(R.id.ok_button)
+
+                            okButton.setOnClickListener {
+                                dialog.dismiss()
+                            }
+                            dialog.show()
+
+                        }
+                        else{
+                            Log.d("result","${response.body()!!.message}")
+                        }
+                    }
+
+                })
+            }
+        }
+    }
 
     fun settingMenu(receiveData: MenuSelection) {
         val menuImage = findViewById<ImageView>(R.id.menu_image)
         val menuName = findViewById<TextView>(R.id.menu_name)
         val menuPrice = findViewById<TextView>(R.id.menu_price)
-        menuImage.setImageResource(receiveData.menuImageSource.toInt())
+        if (receiveData.menuImageSource.contains("image")){
+            Glide
+                .with(this)
+                .load("http://3.39.66.6:3000"+receiveData.menuImageSource)
+                .thumbnail()
+                .into(menuImage)
+        }
+        else{
+            menuImage.setImageResource(receiveData.menuImageSource.toInt())
+        }
         menuName.text = receiveData.menuName
         menuPrice.text = receiveData.menuPrice
     }
@@ -152,7 +262,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
             .setView(view)
             .create()
         dialog.setCancelable(false)
-        var tag: Int = 0
+        var tag = 0
         val regularLinear = view.findViewById<LinearLayout>(R.id.regular_linear)
         val extraLinear = view.findViewById<LinearLayout>(R.id.extra_linear)
         val cancelButton = view.findViewById<TextView>(R.id.cancel_button)

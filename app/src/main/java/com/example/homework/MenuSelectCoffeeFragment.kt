@@ -112,7 +112,7 @@ class MenuSelectCoffeeFragment: Fragment() {
             Glide
                 .with(view)
                 .load(id)
-                .placeholder(R.mipmap.extrasize)
+                .thumbnail()
                 .into(customView.findViewById<ImageView>(R.id.menu_image))
             customView.findViewById<TextView>(R.id.menu_name).text = coffeeGsonArray[index].menuName
             customView.findViewById<TextView>(R.id.menu_price).text = coffeeGsonArray[index].menuPrice
@@ -123,9 +123,7 @@ class MenuSelectCoffeeFragment: Fragment() {
                 startActivity(intent)
                 val menu = MenuSelection(id.toString(), coffeeGsonArray[index].menuName, coffeeGsonArray[index].menuPrice, null, null)
                 myService?.getSelectionData(menu)
-
             }
-
             linearLayout.addView(customView)
         }
     }

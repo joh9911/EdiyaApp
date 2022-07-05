@@ -49,7 +49,6 @@ class MainActivity : AppCompatActivity() {
         Log.d("onStart","adsf")
         val intent = Intent(this,BoundService::class.java)
         serviceUnBind()
-        stopService(intent)
         super.onStart()
     }
 
@@ -99,7 +98,7 @@ class MainActivity : AppCompatActivity() {
             intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
             startActivity(intent)
             theWayOfEating = "매장에서 먹을래요"
-            serviceBind(theWayOfEating)
+//            serviceBind(theWayOfEating)
 
         }
     }
