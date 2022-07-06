@@ -1,20 +1,22 @@
 package com.example.homework
 
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
+import android.content.*
 import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
-import android.content.ServiceConnection
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
 import android.view.KeyEvent
+import android.view.Menu
+import android.view.MenuItem
 import android.view.WindowManager
 import android.widget.Button
+import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
+import com.google.android.material.navigation.NavigationView
 
 class MainActivity : AppCompatActivity() {
     lateinit var theWayOfEating: String
@@ -40,9 +42,41 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.start_page)
-
+        setSupportActionBar(findViewById(R.id.tool_bar))
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
+        initNavigationMenu()
         initEvent()
 
+    }
+    fun initNavigationMenu(){
+        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
+        val navView = findViewById<NavigationView>(R.id.navigation_view)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar,menu)
+        val trashButton = menu?.findItem(R.id.trash_button)
+        val checkButton = menu?.findItem(R.id.check_button)
+        trashButton?.setVisible(false)
+        checkButton?.setVisible(false)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId){
+            android.R.id.home ->{
+                Log.d("ToolBar_item: ", "뒤로가기 버튼 클릭")
+                finish()
+                return true
+            }
+            R.id.menu_button ->{
+                Log.d("menu_button","메뉴 버튼 클릭")
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     override fun onStart(){

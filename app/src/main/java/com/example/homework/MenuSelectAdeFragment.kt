@@ -104,7 +104,7 @@ class MenuSelectAdeFragment: Fragment() {
             Glide
                 .with(view)
                 .load(id)
-                .placeholder(R.mipmap.extrasize)
+                .thumbnail()
                 .into(customView.findViewById<ImageView>(R.id.menu_image))
 //            customView.findViewById<ImageView>(R.id.menu_image).setImageResource(id)
             customView.findViewById<TextView>(R.id.menu_name).text = adeGsonArray[index].menuName

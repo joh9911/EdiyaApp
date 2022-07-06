@@ -4,46 +4,27 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <LinearLayout
-        android:id="@+id/top"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="@color/ediya_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent">
-        <ImageButton
-            android:id="@+id/back_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.15"
-            android:scaleType="fitXY"
-            android:adjustViewBounds="true"
-            android:src="@mipmap/backbutton"
-            android:background="@color/ediya_color"/>
+        app:layout_constraintTop_toTopOf="parent"
+        app:contentInsetStart="0dp"
+        android:minHeight="?attr/actionBarSize"
+        >
         <TextView
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:background="@color/ediya_color"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:text="  EDIYA"
+            android:text="EDIYA MEMBERS"
+            android:textSize="22dp"
             android:textColor="@color/white"
-            android:textSize="40dp"
-            android:textStyle="bold"
-            android:gravity="center"
-            android:paddingRight="20dp"
-            />
+            android:layout_gravity="center"
+            android:textStyle="bold"/>
 
-        <ImageView
-            android:id="@+id/shopping_basket_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
-            android:background="@color/ediya_color"
-            android:src="@mipmap/menu_icon_150667" />
-    </LinearLayout>
+    </androidx.appcompat.widget.Toolbar>
 
     <LinearLayout
         android:id="@+id/mixlatte"
@@ -53,7 +34,7 @@
         android:orientation="horizontal"
         android:paddingTop="25dp"
         android:paddingBottom="25dp"
-        app:layout_constraintTop_toBottomOf="@id/top">
+        app:layout_constraintTop_toBottomOf="@id/tool_bar">
 
         <ImageView
             android:id="@+id/menu_image"

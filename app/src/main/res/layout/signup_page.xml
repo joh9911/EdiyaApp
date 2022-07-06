@@ -5,31 +5,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <TextView
-        android:id="@+id/ediya_logo"
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@color/ediya_color"
-        android:gravity="center"
-        android:paddingTop="20dp"
-        android:paddingBottom="20dp"
-        android:text="EDIYA"
-        android:textColor="@color/white"
-        android:textSize="30dp"
-        android:textStyle="bold"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        />
+        app:contentInsetStart="0dp"
+        android:minHeight="?attr/actionBarSize"
+        >
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="EDIYA MEMBERS"
+            android:textSize="22dp"
+            android:textColor="@color/white"
+            android:layout_gravity="center"
+            android:textStyle="bold"/>
 
-    <ImageButton
-        android:id="@+id/back_button"
-        android:layout_width="80dp"
-        android:layout_height="80dp"
-        android:adjustViewBounds="true"
-        android:background="@color/ediya_color"
-        android:scaleType="fitXY"
-        android:src="@mipmap/backbutton"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintLeft_toLeftOf="parent"/>
+    </androidx.appcompat.widget.Toolbar>
 
 
     <ScrollView
@@ -37,7 +33,7 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         app:layout_constraintBottom_toTopOf="@id/signup_page_signup_button"
-        app:layout_constraintTop_toBottomOf="@id/ediya_logo"
+        app:layout_constraintTop_toBottomOf="@id/tool_bar"
         >
 
         <LinearLayout
@@ -54,7 +50,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="vertical"
-                app:layout_constraintTop_toBottomOf="@id/ediya_logo">
+                app:layout_constraintTop_toBottomOf="@id/tool_bar">
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -256,8 +252,8 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/ediya_logo"
-        app:layout_constraintVertical_bias="0.85"
+        app:layout_constraintTop_toBottomOf="@id/tool_bar"
+        app:layout_constraintVertical_bias="0.9"
         app:layout_constraintWidth_percent="0.9"
         android:background="@color/border_color"
         android:text="회원가입"

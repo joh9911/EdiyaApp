@@ -32,16 +32,14 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:paddingTop="45dp"
-                android:paddingLeft="45dp"
+                android:layout_gravity="center"
                 android:src="@drawable/option_selected_circle_shape" />
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.6"
-                android:scaleType="fitXY"
-                android:src="@mipmap/regular" />
+                android:layout_weight="0.5"
+                android:src="@drawable/ic_baseline_coffee_24" />
 
             <TextView
                 android:layout_width="0dp"
@@ -50,6 +48,7 @@
                 android:gravity="left"
                 android:layout_gravity="center"
                 android:text="Regular"
+                android:paddingLeft="10dp"
                 android:textColor="@color/black"
                 android:textStyle="bold"/>
 
@@ -66,17 +65,15 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="0.5"
-                android:paddingTop="45dp"
-                android:paddingLeft="30dp"
+                android:layout_gravity="center"
                 android:src="@drawable/option_not_selected_circle_shape" />
 
             <ImageView
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_weight="0.3"
+                android:layout_weight="0.5"
                 android:scaleType="fitXY"
-                android:src="@mipmap/extrasize"
-                android:paddingLeft="10dp"
+                android:src="@drawable/ic_baseline_coffee_24"
                 />
 
             <TextView
@@ -85,8 +82,8 @@
                 android:layout_weight="1"
                 android:gravity="left"
                 android:layout_gravity="center"
-                android:paddingLeft="34dp"
                 android:text="Extra"
+                android:paddingLeft="10dp"
                 android:textColor="@color/black"
                 android:textStyle="bold"/>
         </LinearLayout>

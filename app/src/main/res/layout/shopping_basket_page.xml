@@ -4,60 +4,28 @@
     android:layout_height="match_parent"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
-    <LinearLayout
-        android:id="@+id/top"
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/tool_bar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
+        android:background="@color/ediya_color"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:background="@color/ediya_color">
-        <ImageView
-            android:id="@+id/back_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
-            android:src="@mipmap/backbutton"
-            android:background="@color/ediya_color"/>
+        app:contentInsetStart="0dp"
+        android:minHeight="?attr/actionBarSize"
+        >
         <TextView
-            android:id="@+id/shopping_basket"
-            android:layout_width="0dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="0.8"
-            android:background="@color/ediya_color"
-            android:paddingTop="15dp"
-            android:paddingBottom="15dp"
-            android:text="장바구니"
+            android:text="EDIYA MEMBERS"
+            android:textSize="22dp"
             android:textColor="@color/white"
-            android:textSize="30dp"
-            android:gravity="center"
-
-            />
-
-
-        <ImageView
-            android:id="@+id/waste_button"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="0.2"
-            android:background="@color/ediya_color"
-            android:paddingLeft="10dp"
-            android:scaleType="fitXY"
-            android:src="@mipmap/trash_image"/>
-        <Button
-            android:id="@+id/delete_process_confirm_button"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="0.2"
-            android:background="@drawable/round_button"
-            android:text="완료"
-            android:textSize="20dp"
-            android:padding="5dp"
             android:layout_gravity="center"
-            />
-    </LinearLayout>
+            android:textStyle="bold"/>
 
+    </androidx.appcompat.widget.Toolbar>
 
     <ScrollView
         android:id="@+id/shopping_scrollview"
@@ -65,7 +33,7 @@
         android:layout_height="0dp"
         app:layout_constraintHeight_percent="0.6"
         android:background="@color/border_color"
-        app:layout_constraintTop_toBottomOf="@+id/top"
+        app:layout_constraintTop_toBottomOf="@+id/tool_bar"
         >
 
         <LinearLayout
@@ -108,8 +76,9 @@
             android:layout_weight="0.3"
             android:text="7,600 원"
             android:textColor="@color/ediya_color"
-            android:textSize="20dp"
-            android:paddingLeft="10dp"
+            android:textSize="15dp"
+            android:gravity="right"
+            android:paddingRight="10dp"
             android:textStyle="bold" />
     </LinearLayout>
 
@@ -139,6 +108,7 @@
             android:layout_weight="1"
             android:text="전체 선택"
             android:textSize="20dp"
+            android:visibility="invisible"
             android:textColor="@color/black"
             android:background="@drawable/shopping_basket_button"
             android:layout_marginLeft="10dp"
@@ -150,6 +120,7 @@
             android:layout_height="wrap_content"
             android:layout_weight="1"
             android:text="삭제 하기"
+            android:visibility="invisible"
             android:textSize="20dp"
             android:layout_marginLeft="10dp"
             android:layout_marginRight="10dp"/>

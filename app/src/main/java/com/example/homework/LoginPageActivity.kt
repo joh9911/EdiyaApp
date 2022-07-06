@@ -8,6 +8,8 @@ import android.os.Bundle
 import android.os.IBinder
 import android.os.PersistableBundle
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -63,11 +65,36 @@ class LoginPageActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.login_page)
+        setSupportActionBar(findViewById(R.id.tool_bar))
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
         serviceBind()
         initRetrofit()
         initEvent()
         super.onCreate(savedInstanceState)
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId){
+            android.R.id.home ->{
+                Log.d("ToolBar_item: ", "뒤로가기 버튼 클릭")
+                finish()
+                return true
+            }
+            R.id.menu_button ->{
+                Log.d("menu_button","메뉴 버튼 클릭")
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
     override fun onStart() {
         Log.d("login","login")
         super.onStart()
@@ -102,13 +129,9 @@ class LoginPageActivity: AppCompatActivity() {
     }
 
     fun initEvent(){
-        val backButton = findViewById<ImageView>(R.id.back_button)
         val signUpButton = findViewById<Button>(R.id.login_page_signup_button)
         val loginButton = findViewById<Button>(R.id.login_page_login_button)
 
-        backButton.setOnClickListener{
-            finish()
-        }
 
         loginButton.setOnClickListener {
             idValue = findViewById<EditText>(R.id.id_edit_text)!!.text.toString()

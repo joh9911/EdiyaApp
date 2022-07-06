@@ -4,6 +4,8 @@ import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.Button
 import android.widget.EditText
 import android.widget.ImageView
@@ -25,10 +27,33 @@ class SignUpPageActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.signup_page)
+        setSupportActionBar(findViewById(R.id.tool_bar))
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
         initRetrofit()
-        initEvent()
         signUpEvent()
         super.onCreate(savedInstanceState)
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar,menu)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId){
+            android.R.id.home ->{
+                Log.d("ToolBar_item: ", "뒤로가기 버튼 클릭")
+                finish()
+                return true
+            }
+            R.id.menu_button ->{
+                Log.d("menu_button","메뉴 버튼 클릭")
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     fun initRetrofit() {
@@ -36,12 +61,6 @@ class SignUpPageActivity: AppCompatActivity() {
         retrofitHttp = retrofit!!.create(RetrofitService::class.java)
     }
 
-    fun initEvent() {
-        val backButton = findViewById<ImageView>(R.id.back_button)
-        backButton.setOnClickListener {
-            finish()
-        }
-    }
 
     fun signUpEvent() {
         var idEditText = findViewById<EditText>(R.id.signup_id_edittext)

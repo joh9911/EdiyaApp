@@ -9,6 +9,7 @@ import android.os.IBinder
 import android.os.Parcelable
 import android.util.Log
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
@@ -33,7 +34,12 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
     lateinit var retrofit: Retrofit  //connect   걍 외우셈
     lateinit var retrofitHttp: RetrofitService  //cursor
 
-    val deleteIndex = arrayListOf<Int>()
+    var seletAllTag = 1
+
+    lateinit var trashButton: MenuItem
+    lateinit var menuButton: MenuItem
+    lateinit var checkButton: MenuItem
+
     var shoppingList = arrayListOf<MenuSelection>()
 
     var myService: BoundService? = null
@@ -57,169 +63,150 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.shopping_basket_page)
-        Log.d("shoppingoncreate", "여긴됨?")
 
-        val deleteButton = findViewById<Button>(R.id.delete_button)
-        val selectAllButton = findViewById<Button>(R.id.select_all_button)
-        val deleteProcessConfirmButton = findViewById<Button>(R.id.delete_process_confirm_button)
-
-
-        deleteButton.visibility = View.INVISIBLE
-        selectAllButton.visibility = View.INVISIBLE
-        deleteProcessConfirmButton.visibility = View.GONE
+        setSupportActionBar(findViewById(R.id.tool_bar))
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
 
         linearLayout = findViewById(R.id.shopping_basket_linear_layout)
         initRetrofit()
         serviceBind()
-        backButtonEvent()
-        wasteButtonEvent()
-        deleteProcessConfirmButtonEvent()
         orderButtonEvent()
+        deleteButtonEvent()
+        selectAllButtonEvent()
+    }
 
+    fun buttonVisiblitySetting(setting: String){
+        val orderConfirmButton = findViewById<Button>(R.id.order_confirm_button)
+        val deleteButton = findViewById<Button>(R.id.delete_button)
+        val selectAllButton = findViewById<Button>(R.id.select_all_button)
+
+        if(setting == "trashButton pressed") {
+            deleteButton.visibility = View.VISIBLE
+            selectAllButton.visibility = View.VISIBLE
+            orderConfirmButton.visibility = View.INVISIBLE
+        }
+        else if(setting == "checkButton pressed"){
+            deleteButton.visibility = View.INVISIBLE
+            selectAllButton.visibility = View.INVISIBLE
+            orderConfirmButton.visibility = View.VISIBLE
+        }
+
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar,menu)
+
+        checkButton = menu?.findItem(R.id.check_button)!!
+        menuButton = menu?.findItem(R.id.menu_button)!!
+        trashButton = menu?.findItem(R.id.trash_button)!!
+
+        menuButton?.setVisible(false)
+        checkButton?.setVisible(false)
+
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+            R.id.trash_button -> {
+
+                checkButton.setVisible(true)
+                trashButton.setVisible(false)
+                buttonVisiblitySetting("trashButton pressed")
+
+                val count = linearLayout.childCount
+                for (index in 0 until count) {
+                    val child = linearLayout.getChildAt(index)
+                    child.findViewById<CheckBox>(R.id.waste_check_button).visibility = View.VISIBLE
+                    child.invalidate()
+                }
+                return true
+            }
+            R.id.check_button -> {
+                trashButton.setVisible(true)
+                checkButton.setVisible(false)
+
+                buttonVisiblitySetting("checkButton pressed")
+
+                val count = linearLayout.childCount
+                for (index in 0 until count) {
+                    val child = linearLayout.getChildAt(index)
+                    child.findViewById<CheckBox>(R.id.waste_check_button).isChecked = false
+                    child.findViewById<CheckBox>(R.id.waste_check_button).visibility = View.GONE
+                    child.invalidate()
+                }
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
+    fun selectAllButtonEvent(){
+        val selectAllButton = findViewById<Button>(R.id.select_all_button)
+        selectAllButton.setOnClickListener {
+            if (seletAllTag == 1) {
+                val count = linearLayout.childCount
+                for (index in 0 until count) {
+                    val child = linearLayout.getChildAt(index)
+                    val checkBox = child.findViewById<CheckBox>(R.id.waste_check_button)
+                    checkBox.isChecked = true
+                }
+                seletAllTag = 0
+            } else if (seletAllTag == 0) {
+                val count = linearLayout.childCount
+                for (index in 0 until count) {
+                    val child = linearLayout.getChildAt(index)
+                    val checkBox = child.findViewById<CheckBox>(R.id.waste_check_button)
+                    checkBox.isChecked = false
+                }
+                seletAllTag = 1
+            }
+        }
+    }
+
+    fun deleteButtonEvent(){
+        val deleteButton = findViewById<Button>(R.id.delete_button)
+        deleteButton.setOnClickListener {
+            val count = linearLayout.childCount
+            for (index in 0 until count) {
+                val child = linearLayout.getChildAt(index)
+                val checkBox = child.findViewById<CheckBox>(R.id.waste_check_button)
+
+                if (checkBox.isChecked) { // 만약 체크가 됐다면,
+                    val name =
+                        child.findViewById<TextView>(R.id.menu_name).text //체크가 된 인덱스의 child의 메뉴 이름
+
+                    for (index1 in 0 until shoppingList.size) { //저 메뉴 이름과 저장된 shoppingList 안의 Gson 데이터의 메뉴 이름과 비교해서
+                        // 일치하는 항목의 amount를 1 빼준다.
+                        if (name == shoppingList[index1].menuName) {
+                            var amount = shoppingList[index1].amount?.toInt()!!
+                            amount -= 1
+                            shoppingList[index1].amount = amount.toString()
+                        }
+                    }
+                }
+            }
+            buttonVisiblitySetting("checkButton pressed")
+
+            checkButton.setVisible(false)
+            trashButton.setVisible((true))
+
+            linearLayout.removeAllViews()
+
+            addShoppingListView(shoppingList)
+            myService?.getFinalShoppingList(shoppingList)
+        }
     }
 
     fun initRetrofit() {
         retrofit = RetrofitClient.initRetrofit() // 걍 외우셈
         retrofitHttp = retrofit!!.create(RetrofitService::class.java)
-    }
-
-    fun serviceBind() {
-        boundService = Intent(this, BoundService::class.java)
-        bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
-        Log.d("ShoppingBasket 내의 serviceBind", "난 서비스 실행했음")
-    }
-
-    fun serviceUnBind() {
-        if (isConService) {
-            unbindService(serviceConnection)
-            isConService = false
-            Log.d("ShoppingBasket 내의 serviceUnBind", "난 서비스 껏음")
-        }
-
-    }
-
-    override fun onStart() {
-        Log.d("onStart", "adsf")
-        val intent = Intent(this, BoundService::class.java)
-        serviceUnBind()
-        stopService(intent)
-        super.onStart()
-    }
-
-    override fun onUserLeaveHint() {
-        Log.d("onuserleave", "실행")
-        val intent = Intent(this, BoundService::class.java)
-        ContextCompat.startForegroundService(this, intent)
-        super.onUserLeaveHint()
-    }
-
-    override fun onDestroy() {
-        serviceUnBind()
-        super.onDestroy()
-    }
-
-
-    fun wasteButtonEvent() {
-        val wasteButton = findViewById<ImageView>(R.id.waste_button)
-        val orderConfirmButton = findViewById<Button>(R.id.order_confirm_button)
-        val deleteButton = findViewById<Button>(R.id.delete_button)
-        val selectAllButton = findViewById<Button>(R.id.select_all_button)
-        val deleteProcessConfirmButton = findViewById<Button>(R.id.delete_process_confirm_button)
-
-        wasteButton.setOnClickListener {
-            wasteButton.visibility = View.GONE
-            deleteButton.visibility = View.VISIBLE
-            selectAllButton.visibility = View.VISIBLE
-            deleteProcessConfirmButton.visibility = View.VISIBLE
-            orderConfirmButton.visibility = View.INVISIBLE
-
-            val count = linearLayout.childCount
-            for (index in 0 until count) {
-                val child = linearLayout.getChildAt(index)
-                child.findViewById<CheckBox>(R.id.waste_check_button).visibility = View.VISIBLE
-                child.invalidate()
-            }
-            var tag = 1
-            selectAllButton.setOnClickListener {
-                if (tag == 1) {
-                    val count = linearLayout.childCount
-                    for (index in 0 until count) {
-                        val child = linearLayout.getChildAt(index)
-                        val checkBox = child.findViewById<CheckBox>(R.id.waste_check_button)
-                        checkBox.isChecked = true
-                    }
-                    tag = 0
-                } else if (tag == 0) {
-                    val count = linearLayout.childCount
-                    for (index in 0 until count) {
-                        val child = linearLayout.getChildAt(index)
-                        val checkBox = child.findViewById<CheckBox>(R.id.waste_check_button)
-                        checkBox.isChecked = false
-                    }
-                    tag = 1
-                }
-            }
-
-            deleteButton.setOnClickListener {
-                val count = linearLayout.childCount
-                for (index in 0 until count) {
-                    val child = linearLayout.getChildAt(index)
-                    val checkBox = child.findViewById<CheckBox>(R.id.waste_check_button)
-
-                    if (checkBox.isChecked) { // 만약 체크가 됐다면,
-                        val name =
-                            child.findViewById<TextView>(R.id.menu_name).text //체크가 된 인덱스의 child의 메뉴 이름
-
-                        for (index1 in 0 until shoppingList.size) { //저 메뉴 이름과 저장된 shoppingList 안의 Gson 데이터의 메뉴 이름과 비교해서
-                            // 일치하는 항목의 amount를 1 빼준다.
-                            if (name == shoppingList[index1].menuName) {
-                                var amount = shoppingList[index1].amount?.toInt()!!
-                                amount -= 1
-                                shoppingList[index1].amount = amount.toString()
-                            }
-                        }
-                    } else {
-                    }
-
-                }
-                deleteButton.visibility = View.INVISIBLE
-                selectAllButton.visibility = View.INVISIBLE
-                orderConfirmButton.visibility = View.VISIBLE
-                deleteProcessConfirmButton.visibility = View.GONE
-                wasteButton.visibility = View.VISIBLE
-
-                linearLayout.removeAllViews()
-
-                addShoppingListView(shoppingList)
-                myService?.getFinalShoppingList(shoppingList)
-            }
-        }
-    }
-
-    fun deleteProcessConfirmButtonEvent() {
-        val deleteProcessConfirmButton = findViewById<Button>(R.id.delete_process_confirm_button)
-        deleteProcessConfirmButton.setOnClickListener {
-            deleteProcessConfirmButton.visibility = View.GONE
-            findViewById<Button>(R.id.delete_button).visibility = View.INVISIBLE
-            findViewById<Button>(R.id.select_all_button).visibility = View.INVISIBLE
-            findViewById<ImageView>(R.id.waste_button).visibility = View.VISIBLE
-            findViewById<Button>(R.id.order_confirm_button).visibility = View.VISIBLE
-
-            val count = linearLayout.childCount
-            for (index in 0 until count) {
-                val child = linearLayout.getChildAt(index)
-                child.findViewById<CheckBox>(R.id.waste_check_button).isChecked = false
-                child.findViewById<CheckBox>(R.id.waste_check_button).visibility = View.GONE
-                child.invalidate()
-            }
-        }
-    }
-
-    fun backButtonEvent() {
-        val backButton = findViewById<ImageView>(R.id.back_button)
-        backButton.setOnClickListener {
-            finish()
-        }
     }
 
     fun addShoppingListView(shoppingList: ArrayList<MenuSelection>) {
@@ -234,18 +221,22 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                     false
                 )
                 customView.findViewById<CheckBox>(R.id.waste_check_button).visibility = View.GONE
-                customView.findViewById<TextView>(R.id.menu_name).text =
-                    shoppingList[index].menuName
-                customView.findViewById<TextView>(R.id.menu_price).text =
-                    shoppingList[index].menuPrice
+                customView.findViewById<TextView>(R.id.menu_name).text = shoppingList[index].menuName
+                customView.findViewById<TextView>(R.id.menu_price).text = shoppingList[index].menuPrice
                 customView.findViewById<TextView>(R.id.sub_option).text = shoppingList[index].size
-                customView.findViewById<TextView>(R.id.sub_price).text =
-                    shoppingList[index].menuPrice
+                customView.findViewById<TextView>(R.id.sub_price).text = shoppingList[index].menuPrice
+
                 allAmount += 1
-                val a = shoppingList[index].menuPrice.substring(0 until 1)
-                val b = shoppingList[index].menuPrice.substring(2 until 5)
-                val c = a + b
-                allPrice += c.toInt()
+
+                if (shoppingList[index].menuPrice.contains(",")){ // 내가 만든 메뉴들은 가격 표시에 ,가 들어감 레트로핏 과제와 구별하기 위함
+                    val a = shoppingList[index].menuPrice.substring(0 until 1)
+                    val b = shoppingList[index].menuPrice.substring(2 until 5)
+                    val c = a + b
+                    allPrice += c.toInt()
+                }
+                else{
+                    allPrice += shoppingList[index].menuPrice.toInt()
+                }
                 linearLayout.addView(customView)
             }
         }
@@ -259,35 +250,44 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         allPriceText.text = "${allPrice} 원"
     }
 
+
     fun orderButtonEvent() {
         val orderButton = findViewById<Button>(R.id.order_confirm_button)
         orderButton.setOnClickListener {
+
             if (myService?.getLoginStatus()!! == false) { // 로그인을 해야지만 주문을 할 수가 있음
                 val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog, null)
+
                 val dialog = AlertDialog.Builder(this)
                     .setView(view)
                     .create()
-                view.findViewById<TextView>(R.id.message).textSize
+
                 view.findViewById<TextView>(R.id.message).text = "로그인이 필요한 서비스입니다.\n로그인하시겠습니까?"
                 dialog.setCancelable(false)
+
                 val yesButton = view.findViewById<Button>(R.id.yes_button)
                 val noButton = view.findViewById<Button>(R.id.no_button)
+
                 yesButton.setOnClickListener {
                     dialog.dismiss()
                     val intent = Intent(this, LoginPageActivity::class.java)
                     intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
                     startActivity(intent)
                 }
+
                 noButton.setOnClickListener {
                     dialog.dismiss()
                 }
                 dialog.show()
-            } else {
+            }
+
+            else {
                 for (index in 0 until shoppingList.size) {
+
                     var requestData: HashMap<String, Any> = HashMap()
 
                     var allPrice = 0
-                    val a = shoppingList[index].menuPrice.substring(0 until 1)//계산 과정
+                    val a = shoppingList[index].menuPrice.substring(0 until 1)//sum_price 계산
                     val b = shoppingList[index].menuPrice.substring(2 until 5)
                     val c = a + b
                     allPrice = c.toInt() * shoppingList[index].amount?.toInt()!!
@@ -320,19 +320,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                         ) {
                             if (response.body()!!.success) {
                                 Log.d("result", "Request success")
-                                val view = layoutInflater.inflate(R.layout.message_dialog,null)
-                                findViewById<TextView>(R.id.message).text = "주문이 완료되었습니다"
-                                val dialog = AlertDialog.Builder(this@ShoppingBasketPageActivity)
-                                    .setView(view)
-                                    .create()
-                                dialog.setCancelable(false)
-                                val okButton = view.findViewById<Button>(R.id.ok_button)
-
-                                okButton.setOnClickListener {
-                                    dialog.dismiss()
-                                    finish()
-                                }
-                                dialog.show()
+                                messageDialog("주문이 완료되었습니다")
 
                             } else {
                                 Log.d("result", "${response.body()!!.message}")
@@ -346,7 +334,59 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
 
         }
     }
+
+    override fun onStart() {
+        Log.d("onStart", "adsf")
+        val intent = Intent(this, BoundService::class.java)
+        serviceUnBind()
+        stopService(intent)
+        super.onStart()
+    }
+
+    override fun onUserLeaveHint() {
+        Log.d("onuserleave", "실행")
+        val intent = Intent(this, BoundService::class.java)
+        ContextCompat.startForegroundService(this, intent)
+        super.onUserLeaveHint()
+    }
+
+    override fun onDestroy() {
+        serviceUnBind()
+        super.onDestroy()
+    }
+
+    fun serviceBind() {
+        boundService = Intent(this, BoundService::class.java)
+        bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
+        Log.d("ShoppingBasket 내의 serviceBind", "난 서비스 실행했음")
+    }
+
+    fun serviceUnBind() {
+        if (isConService) {
+            unbindService(serviceConnection)
+            isConService = false
+            Log.d("ShoppingBasket 내의 serviceUnBind", "난 서비스 껏음")
+        }
+    }
+
+    fun messageDialog(message: String){
+        val view = layoutInflater.inflate(R.layout.message_dialog,null)
+        view.findViewById<TextView>(R.id.message).text = message
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .create()
+
+        dialog.setCancelable(false)
+        val okButton = view.findViewById<Button>(R.id.ok_button)
+
+        okButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
 }
+
+
 
 
 

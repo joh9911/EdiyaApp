@@ -9,8 +9,11 @@ import android.graphics.Typeface
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.view.View
 import android.widget.*
+import androidx.appcompat.app.AlertDialog
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
@@ -34,12 +37,41 @@ class MenuSelectPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.menu_select_page)
+        setSupportActionBar(findViewById(R.id.tool_bar))
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
         initRetrofit()
         getCategory()
-        shoppingBasketButtoon()
-        backButtonEvent()
-
     }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar,menu)
+        val trashButton = menu?.findItem(R.id.trash_button)
+        val checkButton = menu?.findItem(R.id.check_button)
+        trashButton?.setVisible(false)
+        checkButton?.setVisible(false)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId){
+            android.R.id.home ->{
+                Log.d("ToolBar_item: ", "뒤로가기 버튼 클릭")
+                finish()
+                return true
+            }
+            R.id.menu_button ->{
+                Log.d("menu_button","메뉴 버튼 클릭")
+                val intent = Intent(this, ShoppingBasketPageActivity::class.java)
+                intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+                startActivity(intent)
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
+    }
+
     fun initRetrofit() {
         retrofit = RetrofitClient.initRetrofit() // 걍 외우셈
         retrofitHttp = retrofit!!.create(RetrofitService::class.java)
@@ -57,6 +89,7 @@ class MenuSelectPageActivity : AppCompatActivity() {
         ContextCompat.startForegroundService(this, intent)
         super.onUserLeaveHint()
     }
+
     fun getCategory(){
         val lang = "kr"
         retrofitHttp.getCategory(
@@ -86,7 +119,6 @@ class MenuSelectPageActivity : AppCompatActivity() {
                     Log.d("result","${response.body()!!.message}")
                 }
             }
-
         })
     }
 
@@ -103,22 +135,6 @@ class MenuSelectPageActivity : AppCompatActivity() {
         }.attach()
     }
 
-    fun shoppingBasketButtoon() {
-        val shoppingBasketButton = findViewById<ImageView>(R.id.shopping_basket_button)
-        shoppingBasketButton.setOnClickListener {
-            val intent = Intent(this, ShoppingBasketPageActivity::class.java)
-            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
-            startActivity(intent)
-        }
-    }
 
-    fun backButtonEvent(){
-        val backButton = findViewById<ImageButton>(R.id.back_button)
-
-        backButton.setOnClickListener{
-//            serviceUnBind()
-            finish()
-        }
-    }
 
 }

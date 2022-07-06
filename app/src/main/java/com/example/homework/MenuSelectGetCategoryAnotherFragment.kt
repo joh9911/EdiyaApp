@@ -132,7 +132,7 @@ class MenuSelectGetCategoryAnotherFragment: Fragment() {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
                 startActivity(intent)
-                val menu = MenuSelection(response.body()!!.data[index].menu_image.toString(), response.body()!!.data[index].menu_name, response.body()!!.data[index].menu_price, null, null)
+                val menu = MenuSelection(response.body()!!.data[index].menu_image, response.body()!!.data[index].menu_name, response.body()!!.data[index].menu_price, null, null)
                 myService?.getSelectionData(menu)
             }
             linearLayout.addView(customView)

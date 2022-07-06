@@ -5,6 +5,8 @@ import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
+import android.view.Menu
+import android.view.MenuItem
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -67,10 +69,43 @@ class SelectOptionPageActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.select_option_page)
-        sizeTextView = findViewById<TextView>(R.id.size_text)
+        setSupportActionBar(findViewById(R.id.tool_bar))
+        supportActionBar?.setDisplayShowTitleEnabled(false)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
+
+        sizeTextView = findViewById(R.id.size_text)
         serviceBind()
         initRetrofit()
         initEvent()
+    }
+
+    override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        menuInflater.inflate(R.menu.menu_toolbar,menu)
+        val trashButton = menu?.findItem(R.id.trash_button)
+        val checkButton = menu?.findItem(R.id.check_button)
+        trashButton?.setVisible(false)
+        checkButton?.setVisible(false)
+        return super.onCreateOptionsMenu(menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item?.itemId){
+            android.R.id.home ->{
+                Log.d("ToolBar_item: ", "뒤로가기 버튼 클릭")
+                finish()
+                return true
+            }
+            R.id.menu_button ->{
+                Log.d("menu_button","메뉴 버튼 클릭")
+                val intent = Intent(this, ShoppingBasketPageActivity::class.java)
+                intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+                startActivity(intent)
+
+                return true
+            }
+            else -> return super.onOptionsItemSelected(item)
+        }
     }
 
     fun initRetrofit() {
@@ -97,42 +132,38 @@ class SelectOptionPageActivity : AppCompatActivity() {
         }
     }
 
+    fun messageDialog(message: String){
+        val view = layoutInflater.inflate(R.layout.message_dialog,null)
+        view.findViewById<TextView>(R.id.message).text = message
+        val dialog = AlertDialog.Builder(this)
+            .setView(view)
+            .create()
+
+        dialog.setCancelable(false)
+        val okButton = view.findViewById<Button>(R.id.ok_button)
+
+        okButton.setOnClickListener {
+            dialog.dismiss()
+        }
+        dialog.show()
+    }
+
     fun initEvent() {
-        val backButton = findViewById<ImageButton>(R.id.back_button)
-        backButton.setOnClickListener{
-            finish()
-        }
-        val shoppingBasketButton = findViewById<ImageView>(R.id.shopping_basket_button)
-        shoppingBasketButton.setOnClickListener {
-            val intent = Intent(this, ShoppingBasketPageActivity::class.java)
-            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
-            startActivity(intent)
-        }
 
         val basketButton = findViewById<Button>(R.id.basket_button)
         basketButton.setOnClickListener {
-            val view = layoutInflater.inflate(R.layout.message_dialog,null)
-            val dialog = AlertDialog.Builder(this)
-                .setView(view)
-                .create()
-
-            dialog.setCancelable(false)
-            val okButton = view.findViewById<Button>(R.id.ok_button)
-
-            okButton.setOnClickListener {
-                dialog.dismiss()
+            messageDialog("선택하신 상품을 장바구니에 담았습니다")
                 myService?.getAmountData(amount.toString())
                 myService?.getSizeData(sizeTextView.text.toString())
                 myService?.addShoppingList()
-            }
-            dialog.show()
-
         }
     }
+
     fun orderButtonEvent(receiveData: MenuSelection){
         val orderButton = findViewById<Button>(R.id.order_button)
         orderButton.setOnClickListener {
             if (myService?.getLoginStatus()!! == false){ // 로그인을 해야지만 주문을 할 수가 있음
+
                 val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog,null)
                 val dialog = AlertDialog.Builder(this)
                     .setView(view)
@@ -140,8 +171,10 @@ class SelectOptionPageActivity : AppCompatActivity() {
                 view.findViewById<TextView>(R.id.message).textSize
                 view.findViewById<TextView>(R.id.message).text = "로그인이 필요한 서비스입니다.\n로그인하시겠습니까?"
                 dialog.setCancelable(false)
+
                 val yesButton = view.findViewById<Button>(R.id.yes_button)
                 val noButton = view.findViewById<Button>(R.id.no_button)
+
                 yesButton.setOnClickListener {
                     dialog.dismiss()
                     val intent = Intent(this, LoginPageActivity::class.java)
@@ -155,14 +188,19 @@ class SelectOptionPageActivity : AppCompatActivity() {
             }
 
             else{
-
-                var requestData: HashMap<String, Any> = HashMap()
-
                 var allPrice = 0
-                val a = receiveData.menuPrice.substring(0 until 1)//계산 과정
-                val b = receiveData.menuPrice.substring(2 until 5)
-                val c = a + b
-                allPrice = c.toInt()*amount
+                var requestData: HashMap<String, Any> = HashMap()
+                if (receiveData.menuPrice.contains(",")){
+
+                    val a = receiveData.menuPrice.substring(0 until 1)//계산 과정
+                    val b = receiveData.menuPrice.substring(2 until 5)
+                    val c = a + b
+                    allPrice = c.toInt()*amount
+                }
+                else{
+                    allPrice = receiveData.menuPrice.toInt() * amount
+                }
+
 
                 var myOrderList = orderList(
                     name = receiveData.menuName,
@@ -182,7 +220,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
                     override fun onFailure(
                         call: Call<AccountData>,
                         t: Throwable
-                    ) { // 통신 실패하면 이게 뜸
+                    ) {
                         Log.d("result", "Request Fail: ${t}") // t는 통신 실패 이유
                     }
 
@@ -191,25 +229,12 @@ class SelectOptionPageActivity : AppCompatActivity() {
                         response: Response<AccountData>
                     ) {
                         if (response.body()!!.success) {
-                            val view = layoutInflater.inflate(R.layout.message_dialog,null)
-                            findViewById<TextView>(R.id.message).text = "주문이 완료되었습니다"
-                            val dialog = AlertDialog.Builder(this@SelectOptionPageActivity)
-                                .setView(view)
-                                .create()
-                            dialog.setCancelable(false)
-                            val okButton = view.findViewById<Button>(R.id.ok_button)
-
-                            okButton.setOnClickListener {
-                                dialog.dismiss()
-                            }
-                            dialog.show()
-
+                            messageDialog("주문이 완료되었습니다")
                         }
                         else{
                             Log.d("result","${response.body()!!.message}")
                         }
                     }
-
                 })
             }
         }

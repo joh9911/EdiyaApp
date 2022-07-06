@@ -21,7 +21,7 @@
             android:gravity="center"
             android:paddingTop="30dp"
             android:paddingBottom="30dp"
-            android:text="선택하신 상품을 장바구니에 담았습니다."
+            android:text="선택하신 상품을 장바구니에 담았습니다"
             android:textColor="@color/black"
             android:textSize="20dp" />
 
