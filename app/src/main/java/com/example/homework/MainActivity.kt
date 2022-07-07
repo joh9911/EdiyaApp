@@ -14,11 +14,12 @@ import android.view.WindowManager
 import android.widget.Button
 import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.navigation.NavigationView
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     lateinit var theWayOfEating: String
     lateinit var boundService: Intent
 
@@ -30,8 +31,7 @@ class MainActivity : AppCompatActivity() {
             val b = p1 as BoundService.MyBoundService
             myService = b.getService()
             isConService = true
-            myService?.getEatingWay()
-
+            initNavigationMenu()
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
@@ -42,17 +42,51 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.start_page)
+        serviceBind()
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
-        initNavigationMenu()
-        initEvent()
 
+        initEvent()
     }
+
+    fun gotoAnotherPage(intent: String){
+        if (intent == "login") {
+            val intent = Intent(this, LoginPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+        else if (intent == "shoppingList"){
+            val intent = Intent(this, ShoppingBasketPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+        else if (intent == "signUP"){
+            val intent = Intent(this, SignUpPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+    }
+
     fun initNavigationMenu(){
-        val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
         val navView = findViewById<NavigationView>(R.id.navigation_view)
+        navView.setNavigationItemSelectedListener(this)
+        val navMenu = navView.menu
+        if (myService?.getLoginStatus()!!){
+            navMenu.findItem(R.id.login_button).setVisible(false)
+            navMenu.findItem(R.id.order_record_button).setVisible(false)
+        }
+        Log.d("initNav","${myService?.getLoginStatus()!!}")
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            R.id.login_button -> gotoAnotherPage("login")
+            R.id.basket_button -> gotoAnotherPage("shoppingList")
+            R.id.signup_button -> gotoAnotherPage("signUp")
+        }
+        return false
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -73,6 +107,8 @@ class MainActivity : AppCompatActivity() {
             }
             R.id.menu_button ->{
                 Log.d("menu_button","메뉴 버튼 클릭")
+                val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
+                drawerLayout.openDrawer(GravityCompat.END)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
@@ -99,9 +135,8 @@ class MainActivity : AppCompatActivity() {
         super.onDestroy()
     }
 
-    fun serviceBind(theWayOfEating: String){
+    fun serviceBind(){
         boundService = Intent(this,BoundService::class.java)
-        boundService.putExtra("the way of eating",theWayOfEating)
         bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
         Log.d("MainActivity 내의 serviceBind","난 서비스 실행했음")
     }
@@ -122,8 +157,6 @@ class MainActivity : AppCompatActivity() {
             intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
             startActivity(intent)
             theWayOfEating = "포장해서 먹을래요"
-            serviceBind(theWayOfEating)
-
 
         }
         val takeOutButton = findViewById<Button>(R.id.take_out_button)
@@ -132,7 +165,6 @@ class MainActivity : AppCompatActivity() {
             intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
             startActivity(intent)
             theWayOfEating = "매장에서 먹을래요"
-//            serviceBind(theWayOfEating)
 
         }
     }

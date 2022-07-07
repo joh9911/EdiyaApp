@@ -5,18 +5,31 @@
         android:id="@+id/login_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_login_24"
-        android:title="로그인 버튼"
+        android:title="로그인"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/search_button"
         android:enabled="true"
         android:icon="@drawable/ic_baseline_search_24"
-        android:title="찾기 버튼"
+        android:title="메뉴 찾기"
+        app:showAsAction="ifRoom"/>
+
+    <item
+        android:id="@+id/basket_button"
+        android:enabled="true"
+        android:icon="@drawable/ic_outline_shopping_basket_24"
+        android:title="장바구니"
         app:showAsAction="ifRoom"/>
     <item
-        android:id="@+id/logout_button"
+        android:id="@+id/order_record_button"
         android:enabled="true"
-        android:icon="@drawable/ic_baseline_south_west_24"
-        android:title="로그아웃 버튼"
+        android:icon="@drawable/ic_outline_history_24"
+        android:title="결제 내역"
+        app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/signup_button"
+        android:enabled="true"
+        android:icon="@drawable/ic_outline_person_add_alt_1_24"
+        android:title="회원가입"
         app:showAsAction="ifRoom"/>
 </menu>

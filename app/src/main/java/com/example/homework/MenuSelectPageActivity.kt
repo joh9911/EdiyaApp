@@ -100,10 +100,9 @@ class MenuSelectPageActivity : AppCompatActivity() {
             override fun onFailure(
                 call: Call<AccountCategoryData>,
                 t: Throwable
-            ) { // 통신 실패하면 이게 뜸
-                Log.d("result", "Request Fail: ${t}") // t는 통신 실패 이유
+            ) {
+                Log.d("result", "Request Fail: ${t}")
             }
-
             override fun onResponse(
                 call: Call<AccountCategoryData>,
                 response: Response<AccountCategoryData>

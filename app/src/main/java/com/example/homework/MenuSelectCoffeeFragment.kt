@@ -74,23 +74,6 @@ class MenuSelectCoffeeFragment: Fragment() {
         }
     }
 
-//    fun coffeeArrayToJson() {
-//        var temp = "["
-//        for (index in 0 until coffeeData.size) {
-//
-//            var coffeeJsonData =
-//            "{'menuImageSource': '${coffeeData[index][0]}', 'menuName': '${coffeeData[index][1]}', 'menuPrice': '${coffeeData[index][2]}'}"
-//            temp += coffeeJsonData
-//            if (index < coffeeData.size - 1) {
-//                temp += ","
-//            }
-//        }
-//        temp += "]"
-//        coffeeJsonArray = temp
-//        Log.d("1","${coffeeJsonArray}")
-//    }
-
-
     fun addView(view: View) {
 
         val gson = GsonBuilder()
