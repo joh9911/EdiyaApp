@@ -93,10 +93,10 @@
     </androidx.constraintlayout.widget.ConstraintLayout>
         <com.google.android.material.navigation.NavigationView
             android:id="@+id/navigation_view"
-            android:layout_width="match_parent"
+            android:layout_width="180dp"
             android:layout_height="match_parent"
             android:layout_gravity="right"
             app:menu="@menu/menu_navigation"
-            app:headerLayout="@layout/navigation_header"/>
+            app:headerLayout="@layout/navigation_header_logout"/>
     </androidx.drawerlayout.widget.DrawerLayout>
 </layout>

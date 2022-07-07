@@ -162,7 +162,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
     fun orderButtonEvent(receiveData: MenuSelection){
         val orderButton = findViewById<Button>(R.id.order_button)
         orderButton.setOnClickListener {
-            if (myService?.getLoginStatus()!! == false){ // 로그인을 해야지만 주문을 할 수가 있음
+//            if (myService?.getLoginStatus()!! == false){ // 로그인을 해야지만 주문을 할 수가 있음
 
                 val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog,null)
                 val dialog = AlertDialog.Builder(this)
@@ -187,7 +187,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
                 dialog.show()
             }
 
-            else{
+//            else{
                 var allPrice = 0
                 var requestData: HashMap<String, Any> = HashMap()
                 if (receiveData.menuPrice.contains(",")){
@@ -207,9 +207,9 @@ class SelectOptionPageActivity : AppCompatActivity() {
                     count = amount,
                     sum_price = allPrice
                 )
-
+                var shared = getSharedPreferences("login_data", MODE_PRIVATE)
                 var list = listOf(myOrderList)
-                requestData["id"] = myService!!.getMyId()
+                requestData["id"] = shared.getString("id",null).toString()
                 requestData["order_list"] = list
                 requestData["total_price"] = list[0].sum_price
 
@@ -237,8 +237,6 @@ class SelectOptionPageActivity : AppCompatActivity() {
                     }
                 })
             }
-        }
-    }
 
     fun settingMenu(receiveData: MenuSelection) {
         val menuImage = findViewById<ImageView>(R.id.menu_image)

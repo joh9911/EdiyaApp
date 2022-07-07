@@ -23,6 +23,9 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     lateinit var theWayOfEating: String
     lateinit var boundService: Intent
 
+    lateinit var drawerLayout: DrawerLayout
+    lateinit var navView: NavigationView
+
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection{
@@ -47,8 +50,13 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
-
+        lateNaviInitialize()
         initEvent()
+    }
+
+    fun lateNaviInitialize(){
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.navigation_view)
     }
 
     fun gotoAnotherPage(intent: String){
@@ -70,21 +78,29 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     }
 
     fun initNavigationMenu(){
-        val navView = findViewById<NavigationView>(R.id.navigation_view)
         navView.setNavigationItemSelectedListener(this)
         val navMenu = navView.menu
-        if (myService?.getLoginStatus()!!){
+        var shared = getSharedPreferences("login_data", MODE_PRIVATE)
+        if (shared.getString("id",null) != null){
             navMenu.findItem(R.id.login_button).setVisible(false)
             navMenu.findItem(R.id.order_record_button).setVisible(false)
         }
-        Log.d("initNav","${myService?.getLoginStatus()!!}")
     }
 
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         when (item.itemId){
-            R.id.login_button -> gotoAnotherPage("login")
-            R.id.basket_button -> gotoAnotherPage("shoppingList")
-            R.id.signup_button -> gotoAnotherPage("signUp")
+            R.id.login_button -> {
+                gotoAnotherPage("login")
+                drawerLayout.closeDrawers()
+            }
+            R.id.basket_button -> {
+                gotoAnotherPage("shoppingList")
+                drawerLayout.closeDrawers()
+            }
+            R.id.signup_button -> {
+                gotoAnotherPage("signUp")
+                drawerLayout.closeDrawers()
+            }
         }
         return false
     }
@@ -107,7 +123,6 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
             }
             R.id.menu_button ->{
                 Log.d("menu_button","메뉴 버튼 클릭")
-                val drawerLayout = findViewById<DrawerLayout>(R.id.drawer_layout)
                 drawerLayout.openDrawer(GravityCompat.END)
                 return true
             }

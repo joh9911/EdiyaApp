@@ -10,6 +10,7 @@
         android:layout_height="170dp"
         android:orientation="vertical"
         android:padding="20dp"
+        android:gravity="center"
         android:background="@drawable/layout_button_bottom_border"
         app:layout_constraintTop_toTopOf="parent">
 
@@ -25,23 +26,24 @@
             android:layout_height="wrap_content"
             android:text="Bong Can Do"
             android:textColor="#000000"
+            android:gravity="center"
             android:textSize="20dp"
             android:textStyle="bold" />
 
     </LinearLayout>
 
-    <Button
-        android:layout_width="80dp"
-        android:layout_height="wrap_content"
-        android:background="@drawable/box_border"
-        android:text="로그아웃"
-        android:textColor="@color/black"
+<!--    <Button-->
+<!--        android:layout_width="80dp"-->
+<!--        android:layout_height="wrap_content"-->
+<!--        android:background="@drawable/box_border"-->
+<!--        android:text="로그아웃"-->
+<!--        android:textColor="@color/black"-->
 
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.85"
-        app:layout_constraintVertical_bias="0.7"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+<!--        app:layout_constraintBottom_toBottomOf="parent"-->
+<!--        app:layout_constraintEnd_toEndOf="parent"-->
+<!--        app:layout_constraintHorizontal_bias="0.85"-->
+<!--        app:layout_constraintVertical_bias="0.7"-->
+<!--        app:layout_constraintStart_toStartOf="parent"-->
+<!--        app:layout_constraintTop_toTopOf="parent" />-->
 
 </androidx.constraintlayout.widget.ConstraintLayout>

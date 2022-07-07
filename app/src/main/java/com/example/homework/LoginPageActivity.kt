@@ -1,9 +1,6 @@
 package com.example.homework
 
-import android.content.ComponentName
-import android.content.Context
-import android.content.Intent
-import android.content.ServiceConnection
+import android.content.*
 import android.os.Bundle
 import android.os.IBinder
 import android.os.PersistableBundle
@@ -23,7 +20,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 
 class LoginPageActivity: AppCompatActivity() {
-
+    lateinit var sharedPreferences: SharedPreferences
     var idValue = "" //받아줄 변수
     var pwValue = ""
 
@@ -39,8 +36,6 @@ class LoginPageActivity: AppCompatActivity() {
             val b = p1 as BoundService.MyBoundService
             myService = b.getService()
             isConService = true
-
-
         }
 
         override fun onServiceDisconnected(p0: ComponentName?) {
@@ -65,10 +60,13 @@ class LoginPageActivity: AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         setContentView(R.layout.login_page)
+        sharedPreferences = getSharedPreferences("login_data", MODE_PRIVATE)
+
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
+
         serviceBind()
         initRetrofit()
         initEvent()
@@ -77,6 +75,10 @@ class LoginPageActivity: AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar,menu)
+        val trashButton = menu?.findItem(R.id.trash_button)
+        val checkButton = menu?.findItem(R.id.check_button)
+        trashButton?.setVisible(false)
+        checkButton?.setVisible(false)
         return super.onCreateOptionsMenu(menu)
     }
 
@@ -105,7 +107,6 @@ class LoginPageActivity: AppCompatActivity() {
         super.onDestroy()
     }
     fun initRetrofit() {
-
         retrofit = RetrofitClient.initRetrofit() // 걍 외우셈
         retrofitHttp = retrofit!!.create(RetrofitService::class.java)
     }
@@ -132,7 +133,6 @@ class LoginPageActivity: AppCompatActivity() {
         val signUpButton = findViewById<Button>(R.id.login_page_signup_button)
         val loginButton = findViewById<Button>(R.id.login_page_login_button)
 
-
         loginButton.setOnClickListener {
             idValue = findViewById<EditText>(R.id.id_edit_text)!!.text.toString()
             pwValue = findViewById<EditText>(R.id.pw_edit_text)!!.text.toString()
@@ -145,8 +145,8 @@ class LoginPageActivity: AppCompatActivity() {
                 override fun onFailure(
                     call: Call<AccountData>,
                     t: Throwable
-                ) { // 통신 실패하면 이게 뜸
-                    Log.d("result", "Request Fail: ${t}") // t는 통신 실패 이유
+                ) {
+                    Log.d("result", "Request Fail: ${t}")
                 }
 
                 override fun onResponse(
@@ -155,10 +155,10 @@ class LoginPageActivity: AppCompatActivity() {
                 ) {
                     if (response.body()!!.success) {
                         Log.d("result", "Request success")
-                        myService?.login(idValue)
+                        sharedPreferences.edit().putString("id",idValue).commit()
+                        sharedPreferences.edit().putString("pw",pwValue).commit()
                         val message = "로그인에 성공하셨습니다"
                         messageDialog(message)
-
                     }
                     else{
                         Log.d("result","${response.body()!!.message}")
@@ -166,7 +166,6 @@ class LoginPageActivity: AppCompatActivity() {
                         messageDialog(message)
                     }
                 }
-
             })
         }
         signUpButton.setOnClickListener {

@@ -32,4 +32,10 @@
         android:icon="@drawable/ic_outline_person_add_alt_1_24"
         android:title="회원가입"
         app:showAsAction="ifRoom"/>
+    <item
+        android:id="@+id/logout_button"
+        android:enabled="true"
+        android:icon="@drawable/ic_baseline_south_west_24"
+        android:title="로그아웃"
+        app:showAsAction="ifRoom"/>
 </menu>

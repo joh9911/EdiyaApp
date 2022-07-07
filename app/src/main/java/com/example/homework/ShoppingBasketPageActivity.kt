@@ -255,7 +255,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         val orderButton = findViewById<Button>(R.id.order_confirm_button)
         orderButton.setOnClickListener {
 
-            if (myService?.getLoginStatus()!! == false) { // 로그인을 해야지만 주문을 할 수가 있음
+//            if (myService?.getLoginStatus()!! == false) { // 로그인을 해야지만 주문을 할 수가 있음
                 val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog, null)
 
                 val dialog = AlertDialog.Builder(this)
@@ -281,7 +281,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                 dialog.show()
             }
 
-            else {
+//            else {
                 for (index in 0 until shoppingList.size) {
 
                     var requestData: HashMap<String, Any> = HashMap()
@@ -297,9 +297,9 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                         count = shoppingList[index].amount?.toInt()!!,
                         sum_price = allPrice
                     )
-
+                    var shared = getSharedPreferences("login_data", MODE_PRIVATE)
                     var list = listOf(myOrderList)
-                    requestData["id"] = myService!!.getMyId()
+                    requestData["id"] = shared.getString("id",null).toString()
                     requestData["order_list"] = list
                     requestData["total_price"] = list[0].sum_price
 
@@ -326,14 +326,12 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                                 Log.d("result", "${response.body()!!.message}")
                             }
                         }
-
                     })
                 }
-
             }
 
-        }
-    }
+
+
 
     override fun onStart() {
         Log.d("onStart", "adsf")
