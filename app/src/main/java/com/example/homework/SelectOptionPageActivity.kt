@@ -27,7 +27,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
     lateinit var retrofit: Retrofit  //connect   걍 외우셈
     lateinit var retrofitHttp: RetrofitService  //cursor
 
-
+    lateinit var sharedPreferences: SharedPreferences
 
     var myService: BoundService? = null
     var isConService = false
@@ -68,6 +68,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        sharedPreferences = getSharedPreferences("login_data", MODE_PRIVATE)
         setContentView(R.layout.select_option_page)
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -159,69 +160,62 @@ class SelectOptionPageActivity : AppCompatActivity() {
         }
     }
 
-    fun orderButtonEvent(receiveData: MenuSelection){
+    fun orderButtonEvent(receiveData: MenuSelection) {
+
         val orderButton = findViewById<Button>(R.id.order_button)
+        val idValue = sharedPreferences.getString("id", null)
         orderButton.setOnClickListener {
-//            if (myService?.getLoginStatus()!! == false){ // 로그인을 해야지만 주문을 할 수가 있음
+            Log.d("orderbutton","누름")
+            if (idValue == null) { // 로그인을 해야지만 주문을 할 수가 있음
+                val messageDialog = MessageDialog("yes_or_no_mode")
+                messageDialog.setTextMessage("로그인이 필요한 서비스입니다.\n로그인하시겠습니까?")
+                messageDialog.setButtonEvent(object: MessageDialog.OnButtonClickListener{
+                    override fun yesButtonClickListener() {
+                        val intent = Intent(this@SelectOptionPageActivity, LoginPageActivity::class.java)
+                        intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+                        startActivity(intent)
+                    }
 
-                val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog,null)
-                val dialog = AlertDialog.Builder(this)
-                    .setView(view)
-                    .create()
-                view.findViewById<TextView>(R.id.message).textSize
-                view.findViewById<TextView>(R.id.message).text = "로그인이 필요한 서비스입니다.\n로그인하시겠습니까?"
-                dialog.setCancelable(false)
+                    override fun noButtonClickListener() {
+                    }
 
-                val yesButton = view.findViewById<Button>(R.id.yes_button)
-                val noButton = view.findViewById<Button>(R.id.no_button)
+                    override fun okButtonClickListener() {
+                    }
+                })
+                messageDialog.show(supportFragmentManager,"CustomDialog")
 
-                yesButton.setOnClickListener {
-                    dialog.dismiss()
-                    val intent = Intent(this, LoginPageActivity::class.java)
-                    intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
-                    startActivity(intent)
-                }
-                noButton.setOnClickListener {
-                    dialog.dismiss()
-                }
-                dialog.show()
-            }
-
-//            else{
+            } else {
                 var allPrice = 0
                 var requestData: HashMap<String, Any> = HashMap()
-                if (receiveData.menuPrice.contains(",")){
-
+                if (receiveData.menuPrice.contains(",")) {
                     val a = receiveData.menuPrice.substring(0 until 1)//계산 과정
                     val b = receiveData.menuPrice.substring(2 until 5)
                     val c = a + b
-                    allPrice = c.toInt()*amount
-                }
-                else{
+                    allPrice = c.toInt() * amount
+                } else {
                     allPrice = receiveData.menuPrice.toInt() * amount
                 }
-
 
                 var myOrderList = orderList(
                     name = receiveData.menuName,
                     count = amount,
                     sum_price = allPrice
                 )
-                var shared = getSharedPreferences("login_data", MODE_PRIVATE)
+
                 var list = listOf(myOrderList)
-                requestData["id"] = shared.getString("id",null).toString()
+                requestData["id"] = sharedPreferences.getString("id", null).toString()
                 requestData["order_list"] = list
                 requestData["total_price"] = list[0].sum_price
 
                 retrofitHttp.postOrderMenu(
                     requestData
-                ).enqueue(object: Callback<AccountData> {
+                ).enqueue(object : Callback<AccountData> {
 
                     override fun onFailure(
                         call: Call<AccountData>,
                         t: Throwable
                     ) {
-                        Log.d("result", "Request Fail: ${t}") // t는 통신 실패 이유
+                        Log.d("result", "Request Fail: ${t}")
                     }
 
                     override fun onResponse(
@@ -230,13 +224,14 @@ class SelectOptionPageActivity : AppCompatActivity() {
                     ) {
                         if (response.body()!!.success) {
                             messageDialog("주문이 완료되었습니다")
-                        }
-                        else{
-                            Log.d("result","${response.body()!!.message}")
+                        } else {
+                            Log.d("result", "${response.body()!!.message}")
                         }
                     }
                 })
             }
+        }
+    }
 
     fun settingMenu(receiveData: MenuSelection) {
         val menuImage = findViewById<ImageView>(R.id.menu_image)

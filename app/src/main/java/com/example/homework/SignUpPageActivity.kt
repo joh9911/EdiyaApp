@@ -61,7 +61,6 @@ class SignUpPageActivity: AppCompatActivity() {
         retrofitHttp = retrofit!!.create(RetrofitService::class.java)
     }
 
-
     fun signUpEvent() {
         var idEditText = findViewById<EditText>(R.id.signup_id_edittext)
         var pwEditText = findViewById<EditText>(R.id.signup_pw_edittext)
@@ -111,7 +110,6 @@ class SignUpPageActivity: AppCompatActivity() {
                             Log.d("result", "${response.body()!!.message}")
                         }
                     }
-
                 })
         }
 
@@ -129,13 +127,9 @@ class SignUpPageActivity: AppCompatActivity() {
 
         pwConfirmEditText.addTextChangedListener(object: TextWatcher{
             override fun beforeTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
             }
-
             override fun onTextChanged(p0: CharSequence?, p1: Int, p2: Int, p3: Int) {
-
             }
-
             override fun afterTextChanged(p0: Editable?) {
                 if (pwConfirmEditText.text.toString() != pwEditText.text.toString()) {
                     findViewById<TextView>(R.id.signup_pw_confirm_alert_message).setTextColor(resources.getColor(R.color.red, null))
@@ -149,7 +143,6 @@ class SignUpPageActivity: AppCompatActivity() {
                 }
             }
         })
-
         signUpButton.setOnClickListener {
             if (isIdOverlapChecked and isPwConfirmSame) {
                 var requestData: HashMap<String, String> = HashMap()
@@ -160,12 +153,12 @@ class SignUpPageActivity: AppCompatActivity() {
 
                 retrofitHttp.postAccount(requestData)
                     .enqueue(object :
-                        Callback<AccountData> {     // 이렇게 object로 즉석에서 object형 객체를 만들 수 있음 이름이 없음 걍 여기서만 쓰는거임 애초에 문법이니 외워라
+                        Callback<AccountData> {
                         override fun onFailure(
                             call: Call<AccountData>,
                             t: Throwable
                         ) { // 통신 실패하면 이게 뜸
-                            Log.d("result", "Request Fail: ${t}") // t는 통신 실패 이유
+                            Log.d("result", "Request Fail: ${t}")
                         }
 
                         override fun onResponse(

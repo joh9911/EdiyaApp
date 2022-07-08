@@ -31,6 +31,8 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
     lateinit var linearLayout: LinearLayout
     lateinit var customView: View
 
+    lateinit var sharedPreferences: SharedPreferences
+
     lateinit var retrofit: Retrofit  //connect   걍 외우셈
     lateinit var retrofitHttp: RetrofitService  //cursor
 
@@ -64,12 +66,15 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.shopping_basket_page)
 
+        sharedPreferences = getSharedPreferences("login_data", MODE_PRIVATE)
+
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
 
         linearLayout = findViewById(R.id.shopping_basket_linear_layout)
+
         initRetrofit()
         serviceBind()
         orderButtonEvent()
@@ -92,7 +97,6 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
             selectAllButton.visibility = View.INVISIBLE
             orderConfirmButton.visibility = View.VISIBLE
         }
-
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -253,9 +257,10 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
 
     fun orderButtonEvent() {
         val orderButton = findViewById<Button>(R.id.order_confirm_button)
+        val idValue = sharedPreferences.getString("id", null)
         orderButton.setOnClickListener {
 
-//            if (myService?.getLoginStatus()!! == false) { // 로그인을 해야지만 주문을 할 수가 있음
+            if (idValue == null) { // 로그인을 해야지만 주문을 할 수가 있음
                 val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog, null)
 
                 val dialog = AlertDialog.Builder(this)
@@ -280,8 +285,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                 }
                 dialog.show()
             }
-
-//            else {
+            else {
                 for (index in 0 until shoppingList.size) {
 
                     var requestData: HashMap<String, Any> = HashMap()
@@ -299,7 +303,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                     )
                     var shared = getSharedPreferences("login_data", MODE_PRIVATE)
                     var list = listOf(myOrderList)
-                    requestData["id"] = shared.getString("id",null).toString()
+                    requestData["id"] = shared.getString("id", null).toString()
                     requestData["order_list"] = list
                     requestData["total_price"] = list[0].sum_price
 
@@ -321,7 +325,6 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                             if (response.body()!!.success) {
                                 Log.d("result", "Request success")
                                 messageDialog("주문이 완료되었습니다")
-
                             } else {
                                 Log.d("result", "${response.body()!!.message}")
                             }
@@ -329,9 +332,8 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                     })
                 }
             }
-
-
-
+        }
+    }
 
     override fun onStart() {
         Log.d("onStart", "adsf")

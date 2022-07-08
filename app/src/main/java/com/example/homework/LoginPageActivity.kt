@@ -55,7 +55,6 @@ class LoginPageActivity: AppCompatActivity() {
             isConService = false
             Log.d("MainActivity 내의 serviceUnBind","난 서비스 껏음")
         }
-
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -126,7 +125,6 @@ class LoginPageActivity: AppCompatActivity() {
             finish()
         }
         dialog.show()
-
     }
 
     fun initEvent(){

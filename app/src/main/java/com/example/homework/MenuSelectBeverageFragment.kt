@@ -45,7 +45,7 @@ class MenuSelectBeverageFragment: Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         val view = inflater.inflate(R.layout.menu_select_coffee_fragment,container,false)
-//        beverageArrayToJson()
+
         serviceBind()
         addView(view)
         return view
