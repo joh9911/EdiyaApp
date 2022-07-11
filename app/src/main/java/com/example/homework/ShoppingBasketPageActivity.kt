@@ -192,6 +192,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                             var amount = shoppingList[index1].amount?.toInt()!!
                             amount -= 1
                             shoppingList[index1].amount = amount.toString()
+                            Log.d("난 이만큼을 지웠음","${shoppingList[index1].amount}")
                         }
                     }
                 }
@@ -218,6 +219,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         var allPrice = 0
         for (index in 0 until shoppingList.size) {
             for (amount in 0 until shoppingList[index].amount?.toInt()!!) {
+                Log.d("쇼핑리스트 뷰 동적할당 수량들","${shoppingList[index].amount?.toInt()!!}")
 
                 customView = layoutInflater.inflate(
                     R.layout.shopping_basket_custom_view,
@@ -254,36 +256,26 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         allPriceText.text = "${allPrice} 원"
     }
 
-
     fun orderButtonEvent() {
         val orderButton = findViewById<Button>(R.id.order_confirm_button)
         val idValue = sharedPreferences.getString("id", null)
         orderButton.setOnClickListener {
 
             if (idValue == null) { // 로그인을 해야지만 주문을 할 수가 있음
-                val view = layoutInflater.inflate(R.layout.message_yes_or_no_dialog, null)
-
-                val dialog = AlertDialog.Builder(this)
-                    .setView(view)
-                    .create()
-
-                view.findViewById<TextView>(R.id.message).text = "로그인이 필요한 서비스입니다.\n로그인하시겠습니까?"
-                dialog.setCancelable(false)
-
-                val yesButton = view.findViewById<Button>(R.id.yes_button)
-                val noButton = view.findViewById<Button>(R.id.no_button)
-
-                yesButton.setOnClickListener {
-                    dialog.dismiss()
-                    val intent = Intent(this, LoginPageActivity::class.java)
-                    intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
-                    startActivity(intent)
-                }
-
-                noButton.setOnClickListener {
-                    dialog.dismiss()
-                }
-                dialog.show()
+                val dialog = MessageDialog("yes_or_no_mode")
+                dialog.setTextMessage("로그인이 필요한 서비스입니다.\n로그인하시겠습니까?")
+                dialog.setButtonEvent(object: MessageDialog.OnButtonClickListener{
+                    override fun yesButtonClickListener() {
+                        val intent = Intent(this@ShoppingBasketPageActivity, LoginPageActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
+                        startActivity(intent)
+                    }
+                    override fun noButtonClickListener() {
+                    }
+                    override fun okButtonClickListener() {
+                    }
+                })
+                dialog.show(supportFragmentManager,"Dialog")
             }
             else {
                 for (index in 0 until shoppingList.size) {
@@ -291,7 +283,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                     var requestData: HashMap<String, Any> = HashMap()
 
                     var allPrice = 0
-                    val a = shoppingList[index].menuPrice.substring(0 until 1)//sum_price 계산
+                    val a = shoppingList[index].menuPrice.substring(0 until 1)//sum_price 계산 저장이 3,400으로 되어있어서 , 빼줘야함
                     val b = shoppingList[index].menuPrice.substring(2 until 5)
                     val c = a + b
                     allPrice = c.toInt() * shoppingList[index].amount?.toInt()!!
@@ -324,7 +316,9 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                         ) {
                             if (response.body()!!.success) {
                                 Log.d("result", "Request success")
-                                messageDialog("주문이 완료되었습니다")
+                                val dialog = MessageDialog("ok_mode")
+                                dialog.setTextMessage("주문이 완료되었습니다")
+                                dialog.show(supportFragmentManager,"Dialog")
                             } else {
                                 Log.d("result", "${response.body()!!.message}")
                             }
@@ -367,22 +361,6 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
             isConService = false
             Log.d("ShoppingBasket 내의 serviceUnBind", "난 서비스 껏음")
         }
-    }
-
-    fun messageDialog(message: String){
-        val view = layoutInflater.inflate(R.layout.message_dialog,null)
-        view.findViewById<TextView>(R.id.message).text = message
-        val dialog = AlertDialog.Builder(this)
-            .setView(view)
-            .create()
-
-        dialog.setCancelable(false)
-        val okButton = view.findViewById<Button>(R.id.ok_button)
-
-        okButton.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
     }
 }
 

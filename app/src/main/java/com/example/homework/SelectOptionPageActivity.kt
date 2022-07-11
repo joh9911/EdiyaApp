@@ -78,7 +78,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
         sizeTextView = findViewById(R.id.size_text)
         serviceBind()
         initRetrofit()
-        initEvent()
+        basketButtonEvent()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -133,30 +133,24 @@ class SelectOptionPageActivity : AppCompatActivity() {
         }
     }
 
-    fun messageDialog(message: String){
-        val view = layoutInflater.inflate(R.layout.message_dialog,null)
-        view.findViewById<TextView>(R.id.message).text = message
-        val dialog = AlertDialog.Builder(this)
-            .setView(view)
-            .create()
-
-        dialog.setCancelable(false)
-        val okButton = view.findViewById<Button>(R.id.ok_button)
-
-        okButton.setOnClickListener {
-            dialog.dismiss()
-        }
-        dialog.show()
-    }
-
-    fun initEvent() {
+    fun basketButtonEvent() {
 
         val basketButton = findViewById<Button>(R.id.basket_button)
         basketButton.setOnClickListener {
-            messageDialog("선택하신 상품을 장바구니에 담았습니다")
-                myService?.getAmountData(amount.toString())
-                myService?.getSizeData(sizeTextView.text.toString())
-                myService?.addShoppingList()
+            val dialog = MessageDialog("ok_mode")
+            dialog.setTextMessage("선택하신 상품을 장바구니에 담았습니다")
+            dialog.setButtonEvent(object: MessageDialog.OnButtonClickListener{
+                override fun yesButtonClickListener() {
+                }
+                override fun noButtonClickListener() {
+                }
+                override fun okButtonClickListener() {
+                    myService?.getAmountData(amount.toString())
+                    myService?.getSizeData(sizeTextView.text.toString())
+                    myService?.addShoppingList()
+                }
+            })
+            dialog.show(supportFragmentManager,"Dialog")
         }
     }
 
@@ -167,9 +161,10 @@ class SelectOptionPageActivity : AppCompatActivity() {
         orderButton.setOnClickListener {
             Log.d("orderbutton","누름")
             if (idValue == null) { // 로그인을 해야지만 주문을 할 수가 있음
-                val messageDialog = MessageDialog("yes_or_no_mode")
-                messageDialog.setTextMessage("로그인이 필요한 서비스입니다.\n로그인하시겠습니까?")
-                messageDialog.setButtonEvent(object: MessageDialog.OnButtonClickListener{
+
+                val dialog = MessageDialog("yes_or_no_mode")
+                dialog.setTextMessage("로그인이 필요한 서비스입니다.\n로그인하시겠습니까?")
+                dialog.setButtonEvent(object: MessageDialog.OnButtonClickListener{
                     override fun yesButtonClickListener() {
                         val intent = Intent(this@SelectOptionPageActivity, LoginPageActivity::class.java)
                         intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
@@ -182,7 +177,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
                     override fun okButtonClickListener() {
                     }
                 })
-                messageDialog.show(supportFragmentManager,"CustomDialog")
+                dialog.show(supportFragmentManager,"Dialog")
 
             } else {
                 var allPrice = 0
@@ -223,7 +218,9 @@ class SelectOptionPageActivity : AppCompatActivity() {
                         response: Response<AccountData>
                     ) {
                         if (response.body()!!.success) {
-                            messageDialog("주문이 완료되었습니다")
+                            val dialog = MessageDialog("ok_mode")
+                            dialog.setTextMessage("주문이 완료되었습니다")
+                            dialog.show(supportFragmentManager,"Dialog")
                         } else {
                             Log.d("result", "${response.body()!!.message}")
                         }

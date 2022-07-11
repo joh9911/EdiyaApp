@@ -7,3 +7,4 @@ data class MenuSelection(
         var amount: String?,
         var size: String?
 )
+

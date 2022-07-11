@@ -36,26 +36,52 @@ class BoundService : Service() {
         Log.d("eatingWay", "${wayOfEating}")
     }
 
-    fun getSelectionData(data: MenuSelection) {
+    fun getSelectionData(data: MenuSelection) { //menuSelectionPage에서의 메뉴 정보 저장
         menuSelection = data
     }
 
-    fun sendSelectionData(): MenuSelection{
+    fun sendSelectionData(): MenuSelection{//menuSelectionPage에서 저장한 메뉴 정보 selectOptionPage로 보내기
         return menuSelection
     }
 
-    fun getAmountData(amount: String) {
-        menuAmount = amount
-        menuSelection.amount = menuAmount
+    fun getAmountData(amount: String) {//selectOptionPage에서 선택한 수량 저장
+        Log.d("getAmountData함수첫","${shoppingList}")
+            menuAmount = amount
+            menuSelection.amount = menuAmount
+        Log.d("getAmountData함수","${menuAmount}")
+        Log.d("getAmountData함수","${menuSelection}")
+        Log.d("getAmountData함수","${shoppingList}")
     }
 
-    fun getSizeData(size: String) {
+    fun getSizeData(size: String) {//selectOptionPage에서 선택한 사이즈 저장
         menuSize = size
         menuSelection.size = menuSize
     }
 
     fun addShoppingList(){
-        shoppingList.add(menuSelection)
+        Log.d("addshoppinglist함수","실행됨")
+        Log.d("addshoppinglist내에서 shoppingLIst첫조회","${shoppingList}")
+        for (index in 0 until shoppingList.size){ // 만약 기존의 장바구니에 이름과 사이즈가 같은 품목이 있다면, add하지 말고 그 품목의 amount를 올려줌
+            Log.d("addshoppinglist내에서  반복문속 menusleection menuname","${menuSelection.menuName}")
+            if (shoppingList[index].menuName == menuSelection.menuName && shoppingList[index].size == menuSelection.size){
+                Log.d("반복문 index","${index}")
+                var shoppingListAmount = shoppingList[index].amount?.toInt()!!
+                Log.d("반복문 속 amount1","${shoppingList[index].amount?.toInt()!!}")
+                shoppingListAmount += menuSelection.amount?.toInt()!!
+                Log.d("반복문 속 amount","${shoppingListAmount}")
+                shoppingList[index].amount = shoppingListAmount.toString()
+                Log.d("반복문 속 amount 설정","${shoppingList[index].amount}")
+                break
+            }
+            else{
+                shoppingList.add(menuSelection.copy())
+            }
+        }
+        if (shoppingList.size == 0){
+            Log.d("if문 실행됨","gkgkgkgkgk")
+            shoppingList.add(menuSelection.copy())
+        }
+        Log.d("addshoppinglist내에서 shoppingLIst둘조회","${shoppingList}")
     }
 
     fun sendShoppingList(): ArrayList<MenuSelection>{
