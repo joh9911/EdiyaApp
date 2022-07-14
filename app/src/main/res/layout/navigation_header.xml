@@ -32,6 +32,19 @@
 
     </LinearLayout>
 
+    <TextView
+        android:id="@+id/login_text"
+        android:layout_width="match_parent"
+        android:layout_height="170dp"
+        android:gravity="center"
+        android:text="로그인이 필요합니다"
+        android:textColor="#000000"
+        android:textSize="20dp"
+        android:textStyle="bold"
+        android:background="@drawable/layout_button_bottom_border"
+        app:layout_constraintTop_toBottomOf="@id/login_layout"
+        />
+
 <!--    <Button-->
 <!--        android:layout_width="80dp"-->
 <!--        android:layout_height="wrap_content"-->

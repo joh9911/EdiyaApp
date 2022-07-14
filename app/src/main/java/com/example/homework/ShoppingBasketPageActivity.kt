@@ -17,7 +17,9 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.children
 import androidx.core.view.isGone
+import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.internal.ParcelableSparseArray
+import com.google.android.material.navigation.NavigationView
 import com.google.gson.Gson
 import org.w3c.dom.Text
 import retrofit2.Call
@@ -30,6 +32,9 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
     lateinit var boundService: Intent
     lateinit var linearLayout: LinearLayout
     lateinit var customView: View
+
+    lateinit var drawerLayout: DrawerLayout
+    lateinit var navView: NavigationView
 
     lateinit var sharedPreferences: SharedPreferences
 
@@ -73,8 +78,11 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
 
-        linearLayout = findViewById(R.id.shopping_basket_linear_layout)
+    }
 
+    override fun onResume() {
+        super.onResume()
+        linearLayout = findViewById(R.id.shopping_basket_linear_layout)
         initRetrofit()
         serviceBind()
         orderButtonEvent()
@@ -98,6 +106,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
             orderConfirmButton.visibility = View.VISIBLE
         }
     }
+
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar,menu)
@@ -151,6 +160,26 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         }
     }
 
+
+
+    fun gotoAnotherPage(intent: String){
+        if (intent == "login") {
+            val intent = Intent(this, LoginPageActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+        else if (intent == "shoppingList"){
+            val intent = Intent(this, ShoppingBasketPageActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+        else if (intent == "signUP"){
+            val intent = Intent(this, SignUpPageActivity::class.java)
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+    }
+
     fun selectAllButtonEvent(){
         val selectAllButton = findViewById<Button>(R.id.select_all_button)
         selectAllButton.setOnClickListener {
@@ -172,6 +201,34 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                 seletAllTag = 1
             }
         }
+    }
+
+    fun getOrderData(){
+        val id = sharedPreferences.getString("id",null)!!
+        retrofitHttp.getOrderData(
+            id
+        )
+            .enqueue(object: Callback<orderRecord> {
+
+                override fun onFailure(
+                    call: Call<orderRecord>,
+                    t: Throwable
+                ) {
+                    Log.d("result", "Request Fail: ${t}")
+                }
+                override fun onResponse(
+                    call: Call<orderRecord>,
+                    response: Response<orderRecord>
+                ) {
+                    if (response.body()!!.success) {
+                        Log.d("responresult", "${response.body()!!}")
+
+                    }
+                    else{
+                        Log.d("result","${response.body()!!.message}")
+                    }
+                }
+            })
     }
 
     fun deleteButtonEvent(){
@@ -318,6 +375,17 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
                                 Log.d("result", "Request success")
                                 val dialog = MessageDialog("ok_mode")
                                 dialog.setTextMessage("주문이 완료되었습니다")
+                                dialog.setButtonEvent(object: MessageDialog.OnButtonClickListener{
+                                    override fun noButtonClickListener() {
+                                    }
+
+                                    override fun okButtonClickListener(){
+                                    }
+
+                                    override fun yesButtonClickListener() {
+
+                                    }
+                                })
                                 dialog.show(supportFragmentManager,"Dialog")
                             } else {
                                 Log.d("result", "${response.body()!!.message}")

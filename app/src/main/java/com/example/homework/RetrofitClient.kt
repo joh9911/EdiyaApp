@@ -58,8 +58,8 @@ data class orderList(
 )
 
 data class orderRecordData(
-    var orderList: List<orderList>,
-    var totalList: Int
+    var order_list: List<orderList>,
+    var total_list: Int
 )
 
 data class orderRecord(
@@ -106,7 +106,8 @@ interface RetrofitService {   // 걍 외우셈
     ): Call<AccountData>
 
     @GET("/order")
-    fun getOrderMenu(
+    fun getOrderData(
         @Query("id") id: String
     ): Call<orderRecord>
+
 }

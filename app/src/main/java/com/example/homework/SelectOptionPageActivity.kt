@@ -7,22 +7,29 @@ import android.os.IBinder
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
+import android.view.View
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
+import androidx.drawerlayout.widget.DrawerLayout
 import com.bumptech.glide.Glide
+import com.google.android.material.navigation.NavigationView
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import java.lang.System.load
 
-class SelectOptionPageActivity : AppCompatActivity() {
+class SelectOptionPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     var amount = 1
     lateinit var boundService: Intent
     lateinit var sizeTextView: TextView
     lateinit var menuSelection: MenuSelection
+
+    lateinit var drawerLayout: DrawerLayout
+    lateinit var navView: NavigationView
 
     lateinit var retrofit: Retrofit  //connect   걍 외우셈
     lateinit var retrofitHttp: RetrofitService  //cursor
@@ -50,7 +57,6 @@ class SelectOptionPageActivity : AppCompatActivity() {
         }
     }
 
-
     override fun onStart(){
         Log.d("onStart","adsf")
         val intent = Intent(this,BoundService::class.java)
@@ -70,6 +76,7 @@ class SelectOptionPageActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         sharedPreferences = getSharedPreferences("login_data", MODE_PRIVATE)
         setContentView(R.layout.select_option_page)
+
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
         supportActionBar!!.setDisplayHomeAsUpEnabled(true)
@@ -77,7 +84,13 @@ class SelectOptionPageActivity : AppCompatActivity() {
 
         sizeTextView = findViewById(R.id.size_text)
         serviceBind()
+
+    }
+
+    override fun onResume() {
+        super.onResume()
         initRetrofit()
+        initNavigationMenu()
         basketButtonEvent()
     }
 
@@ -99,14 +112,128 @@ class SelectOptionPageActivity : AppCompatActivity() {
             }
             R.id.menu_button ->{
                 Log.d("menu_button","메뉴 버튼 클릭")
-                val intent = Intent(this, ShoppingBasketPageActivity::class.java)
-                intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
-                startActivity(intent)
-
+                drawerLayout.openDrawer(GravityCompat.END)
                 return true
             }
             else -> return super.onOptionsItemSelected(item)
         }
+    }
+
+    fun initNavigationMenu(){
+        drawerLayout = findViewById(R.id.drawer_layout)
+        navView = findViewById(R.id.navigation_view)
+
+        navView.setNavigationItemSelectedListener(this)
+        val navMenu = navView.menu
+        navMenu.findItem(R.id.login_button).setVisible(false) // 로그인 회원가입 페이지에서는 로그인 버튼 없애기
+        var shared = getSharedPreferences("login_data", MODE_PRIVATE)
+        if (shared.getString("id",null) != null){
+            navMenu.findItem(R.id.login_button).setVisible(false)
+            navMenu.findItem(R.id.order_record_button).setVisible(false)
+            navView.getHeaderView(0).visibility = View.GONE
+            navView.inflateHeaderView(R.layout.navigation_header).findViewById<TextView>(R.id.name).text = shared.getString("id",null)
+        }
+        else{
+            navMenu.findItem(R.id.order_record_button).setVisible(false)
+            navView.getHeaderView(0).visibility = View.GONE
+            navView.inflateHeaderView(R.layout.navigation_header_logout)
+            navMenu.findItem(R.id.logout_button).setVisible(false)
+
+        }
+    }
+
+    fun gotoAnotherPage(intent: String){
+        if (intent == "login") {
+            val intent = Intent(this, LoginPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+        else if (intent == "shoppingList"){
+            val intent = Intent(this, ShoppingBasketPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+        else if (intent == "signUP"){
+            val intent = Intent(this, SignUpPageActivity::class.java)
+            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
+            startActivity(intent)
+        }
+    }
+
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        when (item.itemId){
+            R.id.login_button -> {
+                gotoAnotherPage("login")
+                drawerLayout.closeDrawers()
+            }
+            R.id.basket_button -> {
+                gotoAnotherPage("shoppingList")
+                drawerLayout.closeDrawers()
+            }
+            R.id.signup_button -> {
+                gotoAnotherPage("signUp")
+                drawerLayout.closeDrawers()
+            }
+            R.id.logout_button -> {
+
+                val messageDialog = MessageDialog("yes_or_no_mode")
+                messageDialog.setTextMessage("로그아웃 하시겠습니까?")
+                messageDialog.setButtonEvent(object : MessageDialog.OnButtonClickListener {
+                    override fun noButtonClickListener() {
+                    }
+                    override fun yesButtonClickListener() {
+                        var shared = getSharedPreferences("login_data", MODE_PRIVATE)
+                        shared.edit().clear().apply()
+                        val message = MessageDialog("ok_mode")
+                        message.setTextMessage("로그아웃 되었습니다")
+                        message.setButtonEvent(object : MessageDialog.OnButtonClickListener {
+                            override fun yesButtonClickListener() {}
+
+                            override fun okButtonClickListener() {}
+
+                            override fun noButtonClickListener() {}
+                        })
+                        message.show(supportFragmentManager, "Dialog")
+                    }
+
+                    override fun okButtonClickListener() {
+                    }
+                })
+                messageDialog.show(supportFragmentManager, "Dialog")
+            }
+            R.id.order_record_button -> {
+                getOrderData()
+            }
+        }
+        return false
+    }
+
+    fun getOrderData(){
+        val id = sharedPreferences.getString("id",null)!!
+        retrofitHttp.getOrderData(
+            id
+        )
+            .enqueue(object: Callback<orderRecord> {
+
+                override fun onFailure(
+                    call: Call<orderRecord>,
+                    t: Throwable
+                ) {
+                    Log.d("result", "Request Fail: ${t}")
+                }
+                override fun onResponse(
+                    call: Call<orderRecord>,
+                    response: Response<orderRecord>
+                ) {
+                    if (response.body()!!.success) {
+                        Log.d("responresult", "${response.body()!!}")
+
+                    }
+                    else{
+                        Log.d("result","${response.body()!!.message}")
+                    }
+                }
+            })
     }
 
     fun initRetrofit() {
@@ -220,6 +347,16 @@ class SelectOptionPageActivity : AppCompatActivity() {
                         if (response.body()!!.success) {
                             val dialog = MessageDialog("ok_mode")
                             dialog.setTextMessage("주문이 완료되었습니다")
+                            dialog.setButtonEvent(object: MessageDialog.OnButtonClickListener{
+                                override fun okButtonClickListener() {
+                                }
+
+                                override fun yesButtonClickListener() {
+                                }
+
+                                override fun noButtonClickListener() {
+                                }
+                            })
                             dialog.show(supportFragmentManager,"Dialog")
                         } else {
                             Log.d("result", "${response.body()!!.message}")
