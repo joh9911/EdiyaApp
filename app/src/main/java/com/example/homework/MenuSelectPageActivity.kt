@@ -30,7 +30,6 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
     lateinit var sharedPreferences: SharedPreferences
     lateinit var linearLayout: LinearLayout
 
-    lateinit var viewPagerAdapter: ViewPagerMenuSelectionPageAdapter
     lateinit var tabLayout: TabLayout
 
     lateinit var drawerLayout: DrawerLayout
@@ -231,16 +230,50 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
     }
 
     fun initAdapter() {
-        val fragmentList = listOf(MenuSelectCoffeeFragment(), MenuSelectBeverageFragment(), MenuSelectAdeFragment(), MenuSelectBakeryFragment(), MenuSelectGetCategoryFragment(), MenuSelectGetCategoryAnotherFragment())
-        val adapterXml = findViewById<ViewPager2>(R.id.view_pager)
-        val tabTitle = arrayOf("커피", "베버리지", "에이드", "베이커리",getCategoryArray[0], getCategoryArray[1] ) // 이거 카테고리 여러개가 추가되면 또 일일이 해야하나요?
-        viewPagerAdapter = ViewPagerMenuSelectionPageAdapter(this)
-        viewPagerAdapter.fragments.addAll(fragmentList)
-        adapterXml.adapter = viewPagerAdapter
+        val fragment = MenuSelectionFragment()
+        val bundle = Bundle()
+        bundle.putInt("dataPostion",0)
+        fragment.arguments = bundle  // 이 4줄
+        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
         tabLayout = findViewById(R.id.tap_layout)
-        TabLayoutMediator(tabLayout, adapterXml) { tab, position ->
-            tab.text = tabTitle[position]
-        }.attach()
+        tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
+            override fun onTabReselected(tab: TabLayout.Tab?) {
+             }
+
+            override fun onTabSelected(tab: TabLayout.Tab?) {
+                when (tab?.position) {
+                    0 -> {
+                        val bundle = Bundle()
+                        bundle.putInt("dataPostion",0)
+                        fragment.arguments = bundle  // 이 4줄
+                        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
+                    }
+                    1 -> {
+                        val bundle = Bundle()
+                        bundle.putInt("dataPostion",1)
+                        fragment.arguments = bundle  // 이 4줄
+                        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
+                    }
+                    2 -> {
+                        val bundle = Bundle()
+                        bundle.putInt("dataPostion",2)
+                        fragment.arguments = bundle  // 이 4줄
+                        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
+                    }
+                    3 -> {
+                        val bundle = Bundle()
+                        bundle.putInt("dataPostion",3)
+                        fragment.arguments = bundle  // 이 4줄
+                        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
+                    }
+                }
+            }
+
+            override fun onTabUnselected(tab: TabLayout.Tab?) {
+
+            }
+        })
+
     }
 
     override fun onStart(){

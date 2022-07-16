@@ -62,6 +62,7 @@ class MessageDialog(modeSetting: String): DialogFragment() {
         fun noButtonClickListener()
         fun okButtonClickListener()
     }
+
     fun setTextMessage(message: String){
         messageText = message
     }

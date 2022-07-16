@@ -23,7 +23,7 @@ import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayoutMediator
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
-class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class MainActivity : AppCompatActivity() {
     lateinit var sharedPreferences: SharedPreferences
 
     lateinit var theWayOfEating: String
@@ -60,19 +60,14 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.start_page)
-
-    }
-
-    override fun onResume() {
-        super.onResume()
         serviceBind()
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
-        supportActionBar!!.setDisplayHomeAsUpEnabled(true)
+        supportActionBar!!.setDisplayHomeAsUpEnabled(false)
         supportActionBar!!.setHomeAsUpIndicator(R.drawable.ic_baseline_arrow_back_24)
-        initNavigationMenu()
         initAdapter()
         initEvent()
+
     }
 
     fun initAdapter(){
@@ -82,78 +77,20 @@ class MainActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelecte
         adapterXml.orientation = ViewPager2.ORIENTATION_HORIZONTAL
         dotIndicator.setViewPager2(adapterXml)
     }
+
     fun getImageList(): ArrayList<Int> {
         return arrayListOf(R.mipmap.ediya_ads_1, R.mipmap.ediya_ads_2, R.mipmap.ediya_ads_3)
     }
 
-    fun gotoAnotherPage(intent: String){
-        if (intent == "login") {
-            threadIsStop = true
-            val intent = Intent(this, LoginPageActivity::class.java)
-            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
-            startActivity(intent)
-        }
-        else if (intent == "shoppingList"){
-            threadIsStop = true
-            val intent = Intent(this, ShoppingBasketPageActivity::class.java)
-            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
-            startActivity(intent)
-        }
-        else if (intent == "signUp"){
-            threadIsStop = true
-            val intent = Intent(this, SignUpPageActivity::class.java)
-            intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
-            startActivity(intent)
-        }
-    }
-
-    fun initNavigationMenu(){
-        drawerLayout = findViewById(R.id.drawer_layout)
-        navView = findViewById(R.id.navigation_view)
-
-        navView.setNavigationItemSelectedListener(this)
-        val navMenu = navView.menu
-        var shared = getSharedPreferences("login_data", MODE_PRIVATE)
-        Log.d("shared값","${shared.getString("id",null)}")
-        if (shared.getString("id",null) != null){
-            navMenu.findItem(R.id.login_button).setVisible(false)
-        }
-        else{
-            navMenu.findItem(R.id.logout_button).setVisible(false)
-        }
-    }
-
-    override fun onNavigationItemSelected(item: MenuItem): Boolean {
-        when (item.itemId){
-            R.id.login_button -> {
-                gotoAnotherPage("login")
-                drawerLayout.closeDrawers()
-            }
-            R.id.basket_button -> {
-                gotoAnotherPage("shoppingList")
-                drawerLayout.closeDrawers()
-            }
-            R.id.signup_button -> {
-                gotoAnotherPage("signUp")
-                drawerLayout.closeDrawers()
-            }
-            R.id.logout_button -> {
-                var shared = getSharedPreferences("login_data", MODE_PRIVATE)
-                shared.edit().clear().apply()
-                Log.d("logount0","sdf")
-                Log.d("ha","${shared.getString("id",null)}")
-            }
-
-        }
-        return false
-    }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         menuInflater.inflate(R.menu.menu_toolbar,menu)
         val trashButton = menu?.findItem(R.id.trash_button)
         val checkButton = menu?.findItem(R.id.check_button)
+        val menuButton = menu?.findItem(R.id.menu_button)
         trashButton?.setVisible(false)
         checkButton?.setVisible(false)
+        menuButton?.setVisible(false)
         return super.onCreateOptionsMenu(menu)
     }
 
