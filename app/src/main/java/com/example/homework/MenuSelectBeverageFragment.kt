@@ -21,16 +21,17 @@ import com.google.gson.GsonBuilder
 class MenuSelectBeverageFragment: Fragment() {
     lateinit var boundService: Intent
 
-    var beverageJsonFile = JsonFile.beverageJsonFile
+    var beverageJsonFile = JsonFile.jsonFile
     var myService: BoundService? = null
     var isConService = false
     val serviceConnection = object : ServiceConnection {
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-            Log.d("MainActivity 내의 onServiceConneced"," 실행되나?")
+            Log.d("Beverage 내의 onServiceConneced"," 실행되나?")
             val b = p1 as BoundService.MyBoundService
             myService = b.getService()
             isConService = true
             myService?.getEatingWay()
+            myService?.sendMenuCategoryPosition()
 
         }
 
@@ -87,14 +88,14 @@ class MenuSelectBeverageFragment: Fragment() {
             .setPrettyPrinting()
             .create()
 
-        val beverageGsonArray = gson.fromJson(beverageJsonFile,Array<MenuSelection>::class.java)
+        val beverageGsonArray = gson.fromJson(beverageJsonFile,Array<Array<MenuSelection>>::class.java)
         val linearLayout = view.findViewById<LinearLayout>(R.id.menu_select_page_fragment_linear_layout)
-        for (index in 0 until beverageGsonArray.size) {
+        for (index in 0 until beverageGsonArray[myService?.sendMenuCategoryPosition()!!].size) {
             val customView = layoutInflater.inflate(R.layout.menu_custom_view, linearLayout, false)
 
             val id: Int =
                 resources.getIdentifier(//배열에 R.mipmap.~~ 이런식으로 저장하고 불러와서 .toInt()로 변환해서 넣으면 안돌아감. 배열에 mipmap 이름만 저장하고 이런식으로 불러오기
-                    beverageGsonArray[index].menuImageSource,
+                    beverageGsonArray[myService?.sendMenuCategoryPosition()!!][index].menuImageSource,
                     "mipmap",
                     activity?.packageName
                 )
@@ -104,14 +105,14 @@ class MenuSelectBeverageFragment: Fragment() {
                 .thumbnail()
                 .into(customView.findViewById<ImageView>(R.id.menu_image))
 //            customView.findViewById<ImageView>(R.id.menu_image).setImageResource(id)
-            customView.findViewById<TextView>(R.id.menu_name).text = beverageGsonArray[index].menuName
-            customView.findViewById<TextView>(R.id.menu_price).text = beverageGsonArray[index].menuPrice
+            customView.findViewById<TextView>(R.id.menu_name).text = beverageGsonArray[myService?.sendMenuCategoryPosition()!!][index].menuName
+            customView.findViewById<TextView>(R.id.menu_price).text = beverageGsonArray[myService?.sendMenuCategoryPosition()!!][index].menuPrice
 
             customView.setOnClickListener {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
                 intent.addFlags(FLAG_ACTIVITY_NO_USER_ACTION)
                 startActivity(intent)
-                val menu = MenuSelection(id.toString(), beverageGsonArray[index].menuName, beverageGsonArray[index].menuPrice, null, null)
+                val menu = MenuSelection(id.toString(), beverageGsonArray[myService?.sendMenuCategoryPosition()!!][index].menuName, beverageGsonArray[myService?.sendMenuCategoryPosition()!!][index].menuPrice, null, null)
                 myService?.getSelectionData(menu)
             }
 

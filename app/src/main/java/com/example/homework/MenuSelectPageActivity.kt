@@ -71,6 +71,7 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
 
         initRetrofit()
         getCategory()
+        initAdapter()
     }
 
     fun initNavigationMenu(){
@@ -238,7 +239,7 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
                     for(index in 0 until response.body()!!.data.size){
                         getCategoryArray.add(response.body()!!.data[index].category_name)
                     }
-                    initAdapter()
+
                 }
                 else{
                     Log.d("result","${response.body()!!.message}")
@@ -248,15 +249,15 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
     }
 
     fun initAdapter() {
-        val fragment = MenuSelectionFragment()
-        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
+        val fragment = MenuSelectBeverageFragment()
+        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment).commit()
+        Log.d("나 fragment","생성 했잖아")
         tabLayout = findViewById(R.id.tap_layout)
         tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
             override fun onTabReselected(tab: TabLayout.Tab?) {
              }
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                Log.d("클릭 됐나?","ㅇㅇ")
                 myService?.getMenuCategoryPosition(tab?.position!!)
             }
 
