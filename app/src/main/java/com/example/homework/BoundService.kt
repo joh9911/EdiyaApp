@@ -20,6 +20,7 @@ class BoundService : Service() {
     var wayOfEating= ""
     var menuAmount= ""
     var menuSize= ""
+    var menuCategoryPosition = 0
     lateinit var menuSelection: MenuSelection
     val NOTIFICATION_ID = 10
     val CHANNEL_ID = "primary_notification_channel"
@@ -30,6 +31,10 @@ class BoundService : Service() {
         wayOfEating = p0?.getStringExtra("the way of eating").toString()
 
         return binder
+    }
+    fun getMenuCategoryPosition(position: Int){
+        menuCategoryPosition = position
+        Log.d("category값은","${menuCategoryPosition}")
     }
 
     fun getEatingWay() {

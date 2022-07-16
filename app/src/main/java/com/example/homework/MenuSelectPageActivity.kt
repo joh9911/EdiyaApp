@@ -27,6 +27,7 @@ import retrofit2.Retrofit
 
 
 class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+    lateinit var boundService: Intent
     lateinit var sharedPreferences: SharedPreferences
     lateinit var linearLayout: LinearLayout
 
@@ -40,10 +41,27 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
     lateinit var retrofit: Retrofit  //connect   걍 외우셈
     lateinit var retrofitHttp: RetrofitService  //cursor
 
+    var myService: BoundService? = null
+    var isConService = false
+    val serviceConnection = object : ServiceConnection{
+        override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
+            Log.d("MainActivity 내의 onServiceConneced"," 실행되나?")
+            val b = p1 as BoundService.MyBoundService
+            myService = b.getService()
+            isConService = true
+
+        }
+
+        override fun onServiceDisconnected(p0: ComponentName?) {
+            isConService = false
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         sharedPreferences = getSharedPreferences("login_data", MODE_PRIVATE)
         super.onCreate(savedInstanceState)
         setContentView(R.layout.menu_select_page)
+        serviceBind()
 
         setSupportActionBar(findViewById(R.id.tool_bar))
         supportActionBar?.setDisplayShowTitleEnabled(false)
@@ -231,9 +249,6 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
 
     fun initAdapter() {
         val fragment = MenuSelectionFragment()
-        val bundle = Bundle()
-        bundle.putInt("dataPostion",0)
-        fragment.arguments = bundle  // 이 4줄
         supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
         tabLayout = findViewById(R.id.tap_layout)
         tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
@@ -241,32 +256,8 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
              }
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                when (tab?.position) {
-                    0 -> {
-                        val bundle = Bundle()
-                        bundle.putInt("dataPostion",0)
-                        fragment.arguments = bundle  // 이 4줄
-                        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
-                    }
-                    1 -> {
-                        val bundle = Bundle()
-                        bundle.putInt("dataPostion",1)
-                        fragment.arguments = bundle  // 이 4줄
-                        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
-                    }
-                    2 -> {
-                        val bundle = Bundle()
-                        bundle.putInt("dataPostion",2)
-                        fragment.arguments = bundle  // 이 4줄
-                        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
-                    }
-                    3 -> {
-                        val bundle = Bundle()
-                        bundle.putInt("dataPostion",3)
-                        fragment.arguments = bundle  // 이 4줄
-                        supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment)
-                    }
-                }
+                Log.d("클릭 됐나?","ㅇㅇ")
+                myService?.getMenuCategoryPosition(tab?.position!!)
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -288,6 +279,26 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
         val intent = Intent(this,BoundService::class.java)
         ContextCompat.startForegroundService(this, intent)
         super.onUserLeaveHint()
+    }
+
+    override fun onDestroy() {
+        serviceUnBind()
+        super.onDestroy()
+    }
+
+    fun serviceBind(){
+        boundService = Intent(this,BoundService::class.java)
+        bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
+        Log.d("MainActivity 내의 serviceBind","난 서비스 실행했음")
+    }
+
+    fun serviceUnBind(){
+        if (isConService) {
+            unbindService(serviceConnection)
+            isConService = false
+            Log.d("MainActivity 내의 serviceUnBind","난 서비스 껏음")
+        }
+
     }
 
 

@@ -24,13 +24,12 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
 class MainActivity : AppCompatActivity() {
-    lateinit var sharedPreferences: SharedPreferences
 
     lateinit var theWayOfEating: String
     lateinit var boundService: Intent
 
     lateinit var drawerLayout: DrawerLayout
-    lateinit var navView: NavigationView
+
 
     val handler = Handler(Looper.getMainLooper()){
         setPage()
