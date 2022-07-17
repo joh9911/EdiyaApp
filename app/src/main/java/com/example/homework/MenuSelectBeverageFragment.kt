@@ -17,6 +17,10 @@ import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.gson.GsonBuilder
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.coroutineScope
+import kotlinx.coroutines.launch
 
 class MenuSelectBeverageFragment: Fragment() {
     lateinit var boundService: Intent
@@ -45,12 +49,14 @@ class MenuSelectBeverageFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val view = inflater.inflate(R.layout.menu_select_coffee_fragment,container,false)
 
+        val view = inflater.inflate(R.layout.menu_select_coffee_fragment,container,false)
         serviceBind()
         addView(view)
+
         return view
     }
+
     fun serviceBind(){
         boundService = Intent(context,BoundService::class.java)
         activity?.bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
@@ -68,20 +74,6 @@ class MenuSelectBeverageFragment: Fragment() {
         super.onDestroy()
     }
 
-//    fun beverageArrayToJson() {
-//        var temp = "["
-//        for (index in 0 until beverageData.size) {
-//            var coffeeJsonData =
-//                "{'menuImageSource': '${beverageData[index][0]}', 'menuName': '${beverageData[index][1]}', 'menuPrice': '${beverageData[index][2]}'}"
-//            temp += coffeeJsonData
-//            if (index < beverageData.size - 1) {
-//                temp += ","
-//            }
-//        }
-//        temp += "]"
-//        beverageJsonArray = temp
-//
-//    }
 
     fun addView(view: View) {
         val gson = GsonBuilder()
