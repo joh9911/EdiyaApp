@@ -68,6 +68,7 @@
 
 
         <LinearLayout
+            android:id="@+id/buttons"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             app:layout_constraintBottom_toBottomOf="parent"
@@ -96,6 +97,7 @@
                 android:textSize="20dp"
                 android:layout_marginLeft="15dp"/>
         </LinearLayout>
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
         <com.google.android.material.navigation.NavigationView

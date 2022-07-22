@@ -251,7 +251,6 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
     fun initAdapter() {
         val fragment = MenuSelectBeverageFragment()
         supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment).commit()
-        Log.d("나 fragment","생성 했잖아")
         tabLayout = findViewById(R.id.tap_layout)
         tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
             override fun onTabReselected(tab: TabLayout.Tab?) {

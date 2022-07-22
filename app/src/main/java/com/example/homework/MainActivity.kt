@@ -24,7 +24,7 @@ import com.google.android.material.tabs.TabLayoutMediator
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
 class MainActivity : AppCompatActivity() {
-
+    var index = 0
     lateinit var theWayOfEating: String
     lateinit var boundService: Intent
 
@@ -110,6 +110,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     fun setPage(){
+
         if(currentPosition==2) currentPosition=0
         else currentPosition+=1
         val adapterXml = findViewById<ViewPager2>(R.id.ads_picture)
