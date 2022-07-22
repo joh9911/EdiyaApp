@@ -50,18 +50,21 @@ class MenuSelectBeverageFragment: Fragment() {
 
         val view = inflater.inflate(R.layout.menu_select_coffee_fragment,container,false)
         CoroutineScope(Main).launch {
-            serviceBind()
+            val bindSer = async { serviceBind() }
+            Log.d("코루틴","${bindSer.await()}")
+            Log.d("제발","늦게되야함")
             addView(view)
         }
-        
+
         return view
     }
 
-
-    fun serviceBind(){
+    fun serviceBind(): String{
+        Log.d("sericeBind","시작함")
         boundService = Intent(context,BoundService::class.java)
         activity?.bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
         Log.d("MainSelectCoffeeFragment 내의 serviceBind","난 서비스 실행했음")
+        return "끝냄"
     }
     fun serviceUnBind(){
         if (isConService) {
@@ -83,7 +86,7 @@ class MenuSelectBeverageFragment: Fragment() {
 
         val beverageGsonArray = gson.fromJson(beverageJsonFile,Array<Array<MenuSelection>>::class.java)
         val linearLayout = view.findViewById<LinearLayout>(R.id.menu_select_page_fragment_linear_layout)
-        for (index in 0 until beverageGsonArray[0].size) {
+        for (index in 0 until beverageGsonArray[myService?.sendMenuCategoryPosition()!!].size) {
             val customView = layoutInflater.inflate(R.layout.menu_custom_view, linearLayout, false)
 
             val id: Int =
@@ -98,8 +101,8 @@ class MenuSelectBeverageFragment: Fragment() {
                 .thumbnail()
                 .into(customView.findViewById<ImageView>(R.id.menu_image))
 //            customView.findViewById<ImageView>(R.id.menu_image).setImageResource(id)
-            customView.findViewById<TextView>(R.id.menu_name).text = beverageGsonArray[0][index].menuName
-            customView.findViewById<TextView>(R.id.menu_price).text = beverageGsonArray[0][index].menuPrice
+            customView.findViewById<TextView>(R.id.menu_name).text = beverageGsonArray[myService?.sendMenuCategoryPosition()!!][index].menuName
+            customView.findViewById<TextView>(R.id.menu_price).text = beverageGsonArray[myService?.sendMenuCategoryPosition()!!][index].menuPrice
 
             customView.setOnClickListener {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
