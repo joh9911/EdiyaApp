@@ -25,8 +25,10 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 
-
-class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+interface SaveMenuSelectionData{
+    fun saveMenuSelectionData(data: MenuSelection)
+}
+class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, SaveMenuSelectionData {
     lateinit var boundService: Intent
     lateinit var sharedPreferences: SharedPreferences
     lateinit var linearLayout: LinearLayout
@@ -45,7 +47,7 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
     var isConService = false
     val serviceConnection = object : ServiceConnection{
         override fun onServiceConnected(p0: ComponentName?, p1: IBinder?) {
-            Log.d("MainActivity 내의 onServiceConneced"," 실행되나?")
+            Log.d("MenuSelectionPageActivity 내의 onServiceConnected"," 실행되나?")
             val b = p1 as BoundService.MyBoundService
             myService = b.getService()
             isConService = true
@@ -72,6 +74,11 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
         initRetrofit()
         getCategory()
         initAdapter()
+    }
+
+    override fun saveMenuSelectionData(data: MenuSelection) {
+        val menu = data
+        myService?.getSelectionData(menu)
     }
 
     fun initNavigationMenu(){
@@ -249,7 +256,7 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
     }
 
     fun initAdapter() {
-        val fragment = MenuSelectBeverageFragment()
+        val fragment = MenuSelectFragment(0)
         supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment).commit()
         tabLayout = findViewById(R.id.tap_layout)
         tabLayout.addOnTabSelectedListener(object: TabLayout.OnTabSelectedListener{
@@ -257,7 +264,8 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
              }
 
             override fun onTabSelected(tab: TabLayout.Tab?) {
-                myService?.getMenuCategoryPosition(tab?.position!!)
+                val fragment = MenuSelectFragment(tab?.position!!)
+                supportFragmentManager.beginTransaction().replace(R.id.menu_select_frame_layout, fragment).commit()
             }
 
             override fun onTabUnselected(tab: TabLayout.Tab?) {
@@ -289,7 +297,7 @@ class MenuSelectPageActivity : AppCompatActivity(), NavigationView.OnNavigationI
     fun serviceBind(){
         boundService = Intent(this,BoundService::class.java)
         bindService(boundService, serviceConnection, Context.BIND_AUTO_CREATE)
-        Log.d("MainActivity 내의 serviceBind","난 서비스 실행했음")
+        Log.d("MenuSelectionPage 내의 serviceBind","난 서비스 실행했음")
     }
 
     fun serviceUnBind(){

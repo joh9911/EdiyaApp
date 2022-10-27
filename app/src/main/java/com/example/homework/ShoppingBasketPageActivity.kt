@@ -38,8 +38,8 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
 
     lateinit var sharedPreferences: SharedPreferences
 
-    lateinit var retrofit: Retrofit  //connect   걍 외우셈
-    lateinit var retrofitHttp: RetrofitService  //cursor
+    lateinit var retrofit: Retrofit
+    lateinit var retrofitHttp: RetrofitService
 
     var seletAllTag = 1
 
@@ -160,25 +160,6 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
         }
     }
 
-
-
-    fun gotoAnotherPage(intent: String){
-        if (intent == "login") {
-            val intent = Intent(this, LoginPageActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
-            startActivity(intent)
-        }
-        else if (intent == "shoppingList"){
-            val intent = Intent(this, ShoppingBasketPageActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
-            startActivity(intent)
-        }
-        else if (intent == "signUP"){
-            val intent = Intent(this, SignUpPageActivity::class.java)
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
-            startActivity(intent)
-        }
-    }
 
     fun selectAllButtonEvent(){
         val selectAllButton = findViewById<Button>(R.id.select_all_button)

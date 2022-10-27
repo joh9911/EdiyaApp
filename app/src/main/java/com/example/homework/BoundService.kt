@@ -32,14 +32,6 @@ class BoundService : Service() {
 
         return binder
     }
-    fun getMenuCategoryPosition(position: Int){
-        menuCategoryPosition = position
-        Log.d("category값은","${menuCategoryPosition}")
-    }
-
-    fun sendMenuCategoryPosition(): Int{
-        return menuCategoryPosition
-    }
 
     fun getEatingWay() {
         Log.d("eatingWay", "${wayOfEating}")

@@ -23,6 +23,7 @@
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/drawable/select_button.xml" value="0.1235" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/drawable/shopping_basket_button.xml" value="0.1235" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/activity_main.xml" value="0.2" />
+        <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/af.xml" value="0.15260416666666668" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/custom_view_menu_select.xml" value="0.264" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/item_list_menu.xml" value="0.10364583333333334" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/login_page.xml" value="0.264" />
@@ -57,7 +58,7 @@
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/select_option_page_fragment.xml" value="0.1125" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/select_size_option_dialog.xml" value="0.264" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/shopping_baskcet_delete_fragment.xml" value="0.15760869565217392" />
-        <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/shopping_basket_custom_view.xml" value="0.2" />
+        <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/shopping_basket_custom_view.xml" value="0.1" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/shopping_basket_delete_custom_view.xml" value="0.16799999999999998" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/shopping_basket_delete_page.xml" value="0.2" />
         <entry key="..\:/Users/joh9911/Desktop/joh9911/stageus/homework/app/src/main/res/layout/shopping_basket_delete_page_fragment.xml" value="0.2" />
@@ -80,5 +81,12 @@
   </component>
   <component name="ProjectType">
     <option name="id" value="Android" />
+  </component>
+  <component name="VisualizationToolProject">
+    <option name="state">
+      <ProjectState>
+        <option name="scale" value="0.1" />
+      </ProjectState>
+    </option>
   </component>
 </project>
