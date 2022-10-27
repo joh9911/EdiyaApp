@@ -11,6 +11,7 @@ import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.drawerlayout.widget.DrawerLayout
+
 import com.google.android.material.navigation.NavigationView
 import retrofit2.Call
 import retrofit2.Callback
@@ -369,9 +370,7 @@ class ShoppingBasketPageActivity: AppCompatActivity() {
 
     override fun onStart() {
         Log.d("onStart", "adsf")
-        val intent = Intent(this, BoundService::class.java)
-        serviceUnBind()
-        stopService(intent)
+
         super.onStart()
     }
 

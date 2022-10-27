@@ -89,16 +89,7 @@ class BoundService : Service() {
     }
 
     override fun onStartCommand(intent: Intent?, flags: Int, startId: Int): Int {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            createNotificationChannel()
-            val builder = NotificationCompat.Builder(this, CHANNEL_ID)
-            .setContentTitle("EdiyaApp")
-            .setContentText("이디야 앱이 실행중입니다.")
-            builder.setPriority(NotificationCompat.PRIORITY_DEFAULT)
-            val notification = builder.build()
-            Log.d("Test", "start foreground")
-            startForeground(NOTIFICATION_ID, notification)
-        }
+
         return super.onStartCommand(intent, flags, startId)
     }
 
@@ -108,21 +99,6 @@ class BoundService : Service() {
         }
     }
 
-    fun createNotificationChannel() {
-        val notificationChannel = NotificationChannel(
-            CHANNEL_ID,
-            "EdiyaApp",
-            NotificationManager.IMPORTANCE_DEFAULT
-        )
-        notificationChannel.enableLights(true)
-        notificationChannel.enableVibration(true)
-        notificationChannel.description = "AppApp Tests"
-
-        val notificationManager = applicationContext.getSystemService(
-            Context.NOTIFICATION_SERVICE) as NotificationManager
-        notificationManager.createNotificationChannel(
-            notificationChannel)
-    }
 
     override fun onDestroy() {
         Log.d("destory","service 종료")
