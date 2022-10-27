@@ -1,6 +1,5 @@
-package com.example.homework
+package com.example.ediya_app
 
-import android.accounts.Account
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory

@@ -1,32 +1,21 @@
-package com.example.homework
+package com.example.ediya_app
 
-import android.annotation.SuppressLint
 import android.content.*
-import android.graphics.Color
-import android.media.Image
 import android.os.Bundle
 import android.os.IBinder
-import android.os.Parcelable
 import android.util.Log
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
-import androidx.core.view.children
-import androidx.core.view.isGone
 import androidx.drawerlayout.widget.DrawerLayout
-import com.google.android.material.internal.ParcelableSparseArray
 import com.google.android.material.navigation.NavigationView
-import com.google.gson.Gson
-import org.w3c.dom.Text
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.lang.NullPointerException
 
 class ShoppingBasketPageActivity: AppCompatActivity() {
     lateinit var boundService: Intent

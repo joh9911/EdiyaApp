@@ -1,4 +1,4 @@
-package com.example.homework
+package com.example.ediya_app
 
 import android.content.*
 import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
@@ -20,7 +20,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
-import java.lang.System.load
 
 class SelectOptionPageActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
     var amount = 1

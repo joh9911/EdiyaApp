@@ -1,8 +1,7 @@
-package com.example.homework
+package com.example.ediya_app
 
 import android.content.*
 import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
-import android.graphics.Typeface
 import android.os.Bundle
 import android.os.IBinder
 import android.util.Log
@@ -10,16 +9,13 @@ import android.view.Menu
 import android.view.MenuItem
 import android.view.View
 import android.widget.*
-import androidx.appcompat.app.AlertDialog
 
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.viewpager2.widget.ViewPager2
 import com.google.android.material.navigation.NavigationView
 import com.google.android.material.tabs.TabLayout
-import com.google.android.material.tabs.TabLayoutMediator
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response

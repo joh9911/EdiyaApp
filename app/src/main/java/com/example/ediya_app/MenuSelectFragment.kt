@@ -1,13 +1,8 @@
-package com.example.homework
+package com.example.ediya_app
 
-import android.content.ComponentName
-import android.content.Context
 import android.content.Intent
 import android.content.Intent.FLAG_ACTIVITY_NO_USER_ACTION
-import android.content.ServiceConnection
 import android.os.Bundle
-import android.os.IBinder
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,7 +13,6 @@ import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.google.gson.GsonBuilder
 import kotlinx.coroutines.*
-import kotlinx.coroutines.Dispatchers.Main
 
 class MenuSelectFragment(position: Int): Fragment() {
     lateinit var boundService: Intent

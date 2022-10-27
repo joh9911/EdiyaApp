@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.homework">
+    package="com.example.ediya_app">
 
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -16,7 +16,7 @@
 
 
         <activity
-            android:name=".MainActivity"
+            android:name="com.example.ediya_app.MainActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -24,13 +24,13 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".MenuSelectPageActivity" />
-        <activity android:name=".SelectOptionPageActivity" />
-        <activity android:name=".ShoppingBasketPageActivity" />
-        <activity android:name=".LoginPageActivity" />
-        <activity android:name=".SignUpPageActivity" />
+        <activity android:name="com.example.ediya_app.MenuSelectPageActivity" />
+        <activity android:name="com.example.ediya_app.SelectOptionPageActivity" />
+        <activity android:name="com.example.ediya_app.ShoppingBasketPageActivity" />
+        <activity android:name="com.example.ediya_app.LoginPageActivity" />
+        <activity android:name="com.example.ediya_app.SignUpPageActivity" />
 
-        <service android:name=".BoundService" />
+        <service android:name="com.example.ediya_app.BoundService" />
     </application>
 
 </manifest>

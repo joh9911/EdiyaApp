@@ -1,4 +1,4 @@
-package com.example.homework
+package com.example.ediya_app
 
 import android.content.ComponentName
 import android.content.Context
@@ -15,13 +15,13 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
-import com.google.gson.GsonBuilder
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 
-class MenuSelectGetCategoryFragment: Fragment() {
+class MenuSelectGetCategoryAnotherFragment: Fragment() {
+
     lateinit var boundService: Intent
 
     lateinit var retrofit: Retrofit  //connect   걍 외우셈
@@ -77,7 +77,7 @@ class MenuSelectGetCategoryFragment: Fragment() {
         retrofitHttp = retrofit!!.create(RetrofitService::class.java)
     }
     fun getMenu(view: View){
-        var categoryName = "커피"
+        var categoryName = "음료"
         var lang = "kr"
         retrofitHttp.getCategoryMenu(
             categoryName,
@@ -87,8 +87,8 @@ class MenuSelectGetCategoryFragment: Fragment() {
             override fun onFailure(
                 call: Call<AccountCategoryMenuData>,
                 t: Throwable
-            ) { // 통신 실패하면 이게 뜸
-                Log.d("result", "Request Fail: ${t}") // t는 통신 실패 이유
+            ) {
+                Log.d("result", "Request Fail: ${t}")
             }
 
             override fun onResponse(
@@ -132,11 +132,12 @@ class MenuSelectGetCategoryFragment: Fragment() {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
                 startActivity(intent)
-                val menu = MenuSelection(response.body()!!.data[index].menu_image.toString(), response.body()!!.data[index].menu_name, response.body()!!.data[index].menu_price, null, null)
+                val menu = MenuSelection(response.body()!!.data[index].menu_image, response.body()!!.data[index].menu_name, response.body()!!.data[index].menu_price, null, null)
                 myService?.getSelectionData(menu)
             }
             linearLayout.addView(customView)
         }
     }
 }
+
 

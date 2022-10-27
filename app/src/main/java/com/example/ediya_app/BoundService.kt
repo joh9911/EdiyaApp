@@ -1,18 +1,13 @@
-package com.example.homework
+package com.example.ediya_app
 
 import android.app.*
-import android.content.ComponentName
 import android.content.Context
 import android.content.Intent
-import android.content.ServiceConnection
 import android.os.Binder
 import android.os.Build
 import android.os.IBinder
 import android.util.Log
-import android.view.Menu
-import android.widget.Toast
 import androidx.core.app.NotificationCompat
-import com.google.gson.Gson
 
 class BoundService : Service() {
 

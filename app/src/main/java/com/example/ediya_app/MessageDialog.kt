@@ -1,12 +1,9 @@
-package com.example.homework
+package com.example.ediya_app
 
-import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Context
 import android.graphics.Point
 import android.os.Build
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,7 +12,6 @@ import android.widget.Button
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.DialogFragment
-import org.w3c.dom.Text
 
 class MessageDialog(modeSetting: String): DialogFragment() {
     var messageText = ""

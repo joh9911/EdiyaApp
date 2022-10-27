@@ -1,4 +1,4 @@
-package com.example.homework
+package com.example.ediya_app
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

@@ -1,4 +1,4 @@
-package com.example.homework
+package com.example.ediya_app
 
 import org.junit.Test
 

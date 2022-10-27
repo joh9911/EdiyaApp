@@ -1,12 +1,9 @@
-package com.example.homework
+package com.example.ediya_app
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.ImageView
-import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentActivity
 import androidx.recyclerview.widget.RecyclerView
-import androidx.viewpager2.adapter.FragmentStateAdapter
 
 class ViewPagerStartPageAdapter(imageList: ArrayList<Int>) : RecyclerView.Adapter<ViewPagerStartPageAdapter.PagerViewHolder>(){
     var item = imageList

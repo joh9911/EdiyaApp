@@ -1,4 +1,4 @@
-package com.example.homework
+package com.example.ediya_app
 
 import android.content.ComponentName
 import android.content.Context
@@ -20,8 +20,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 
-class MenuSelectGetCategoryAnotherFragment: Fragment() {
-
+class MenuSelectGetCategoryFragment: Fragment() {
     lateinit var boundService: Intent
 
     lateinit var retrofit: Retrofit  //connect   걍 외우셈
@@ -77,7 +76,7 @@ class MenuSelectGetCategoryAnotherFragment: Fragment() {
         retrofitHttp = retrofit!!.create(RetrofitService::class.java)
     }
     fun getMenu(view: View){
-        var categoryName = "음료"
+        var categoryName = "커피"
         var lang = "kr"
         retrofitHttp.getCategoryMenu(
             categoryName,
@@ -87,8 +86,8 @@ class MenuSelectGetCategoryAnotherFragment: Fragment() {
             override fun onFailure(
                 call: Call<AccountCategoryMenuData>,
                 t: Throwable
-            ) {
-                Log.d("result", "Request Fail: ${t}")
+            ) { // 통신 실패하면 이게 뜸
+                Log.d("result", "Request Fail: ${t}") // t는 통신 실패 이유
             }
 
             override fun onResponse(
@@ -132,12 +131,11 @@ class MenuSelectGetCategoryAnotherFragment: Fragment() {
                 val intent = Intent(context,SelectOptionPageActivity::class.java)
                 intent.addFlags(Intent.FLAG_ACTIVITY_NO_USER_ACTION)
                 startActivity(intent)
-                val menu = MenuSelection(response.body()!!.data[index].menu_image, response.body()!!.data[index].menu_name, response.body()!!.data[index].menu_price, null, null)
+                val menu = MenuSelection(response.body()!!.data[index].menu_image.toString(), response.body()!!.data[index].menu_name, response.body()!!.data[index].menu_price, null, null)
                 myService?.getSelectionData(menu)
             }
             linearLayout.addView(customView)
         }
     }
 }
-
 

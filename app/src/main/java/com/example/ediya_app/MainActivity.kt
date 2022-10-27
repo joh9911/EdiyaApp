@@ -1,4 +1,4 @@
-package com.example.homework
+package com.example.ediya_app
 
 
 import android.content.*
@@ -11,16 +11,10 @@ import android.os.Looper
 import android.util.Log
 import android.view.*
 import android.widget.Button
-import android.widget.ImageView
-import android.widget.TextView
-import androidx.appcompat.widget.Toolbar
 import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.recyclerview.widget.RecyclerView
 import androidx.viewpager2.widget.ViewPager2
-import com.google.android.material.navigation.NavigationView
-import com.google.android.material.tabs.TabLayoutMediator
 import com.tbuonomo.viewpagerdotsindicator.DotsIndicator
 
 class MainActivity : AppCompatActivity() {
