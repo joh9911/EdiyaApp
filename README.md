@@ -11,7 +11,7 @@
 
 
 
-![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/102031783/198420393-7deaa7d5-856f-49d7-9ba5-5f60191371b6.gif)
+![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/102031783/198420393-7deaa7d5-856f-49d7-9ba5-5f60191371b6.gif){: width="20%" height="20%"}
 
 
 ### 2. MenuSelectPageActivity
