@@ -1,6 +1,6 @@
 
 
-현존하는 이디야 앱을 그대로 따라 만들었습니다. 여기에 sharedpreference, navigation bar 등
+현존하는 이디야 앱을 그대로 따라 만들었습니다. 여기에 toolBar, navigation bar, customView 등
 자주 쓰이는 기능들을 추가하여 연습해보는 시간을 가졌습니다.
 
 # 실행 이미지.
