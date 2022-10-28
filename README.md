@@ -10,7 +10,11 @@
 
 
 
+
+
 <img src="https://user-images.githubusercontent.com/102031783/198420393-7deaa7d5-856f-49d7-9ba5-5f60191371b6.gif"  width="30%" height="30%"/>
+
+
 
 
 
@@ -20,7 +24,11 @@
 
 
 
+
+
 <img src="https://user-images.githubusercontent.com/102031783/198420436-645d198f-ca00-4f6e-b23a-b805bd010641.gif"  width="30%" height="30%"/>
+
+
 
 
 
@@ -30,12 +38,18 @@
 
 
 
+
+
 <img src="https://user-images.githubusercontent.com/102031783/198420485-1a362ad7-134f-46ac-952c-82086a11f931.gif"  width="30%" height="30%"/>
 
 
 
 
+
+
 ### 4. ShoppingBasketActivity
+
+
 
 
 
@@ -46,7 +60,11 @@
 
 
 
+
+
 ### 5. Login + SignUpPageActivity
+
+
 
 
 
