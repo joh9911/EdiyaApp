@@ -1,10 +1,11 @@
-# EdiyaApp
-이디야 앱 클론 코딩 + 기능 추가
+
 
 현존하는 이디야 앱을 그대로 따라 만들었습니다. 여기에 sharedpreference, navigation bar 등
 자주 쓰이는 기능들을 추가하여 연습해보는 시간을 가졌습니다.
 
-#실행 이미지
+# 실행 이미지.
+
+
 1. mainActivity
 ![ezgif com-gif-maker (2)](https://user-images.githubusercontent.com/102031783/198420393-7deaa7d5-856f-49d7-9ba5-5f60191371b6.gif)
 
