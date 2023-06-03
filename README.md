@@ -27,10 +27,8 @@
     </tr>
 </table>
 <table>
-    <tr>
         <th>장바구니 화면</th>
       <th>결제버튼 누를 시 로그인 + 회원가입 화면</th>
-    </tr>
     <tr>
         <td valign="top">
             <img src="https://user-images.githubusercontent.com/102031783/198420515-fd06f271-001b-468a-bfb5-d2ce5d1a0ffd.gif"  width="100%" />
