@@ -26,8 +26,6 @@
         </td>
     </tr>
 </table>
-
-
 <table>
     <tr>
         <th>장바구니 화면</th>
