@@ -29,14 +29,13 @@
 <table>
         <th>장바구니 화면</th>
       <th>결제버튼 누를 시 로그인 + 회원가입 화면</th>
-
+    <tr
         <td valign="top">
             <img src="https://user-images.githubusercontent.com/102031783/198420515-fd06f271-001b-468a-bfb5-d2ce5d1a0ffd.gif"  width="100%" />
         </td>
         <td valign="top">
             <img src="https://user-images.githubusercontent.com/102031783/198420615-a5b44d7f-c9ca-409e-b459-fb2f8ba463c9.gif"  width="100%"/>
         </td>
-        
     </tr>
 </table>
 
